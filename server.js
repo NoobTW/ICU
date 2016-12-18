@@ -4,8 +4,7 @@ var bodyParser = require('body-parser');
 var pug = require('pug');
 var port = process.env.PORT || 10150;
 var fs = require('fs');
-var passport = require('passport');
-var FacebookStrategy = require('passport-facebook').Strategy;
+var request = require('request');
 //var logger = require('morgan');
 //var cors = require('cors');
 
@@ -44,13 +43,46 @@ app
 })
 
 .get('/auth/facebook', (req, res) => {
-	passport.authenticate('facebook', { scope: 'read_stream' });
+	var facebook_oauth_url = 'https://www.facebook.com/dialog/oauth?' +
+		'redirect_uri=http://localhost:10150/auth/facebook/callback'+
+		'&client_id=1800155283585541' +
+		'&scope=public_profile'+
+		'&response_type=code';
+	res.redirect(facebook_oauth_url);
+	//res.send(JSON.stringify({'redirect_url':facebook_oauth_url}));
 })
 
 .get('/auth/facebook/callback', (req, res) => {
-	passport.authenticate('facebook', {
-		successRedirect: '/dashboard',
-		failureRedirect: '/'
+var code = req.query.code;
+	var token_option = {
+		url:'https://graph.facebook.com/v2.3/oauth/access_token?' +
+			'client_id=1800155283585541' +
+			'&client_secret=5f559de2468c506036c10164a0c8adff' +
+			'&code=' + code +
+			'&redirect_uri=' + 'http://localhost:10150/auth/facebook/callback',
+		method:"GET"
+	};
+	request(token_option, (err, resposne, body) => {
+		var access_token = JSON.parse(body).access_token;
+		var info_option = {
+		url:'https://graph.facebook.com/debug_token?'+
+		'input_token='+access_token +
+		'&access_token=1800155283585541',
+		method:"GET"
+		};
+		request(info_option, (err, response, body) => {
+			if(err){
+				res.send(err);
+			}
+
+			request({url:'https://graph.facebook.com/me?access_token=' + access_token}, (err, response, body) => {
+				if(err){
+					res.send(err);
+				}else{
+					res.send(body);
+				}
+			});
+		});
 	});
 })
 
