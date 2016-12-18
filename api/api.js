@@ -1,5 +1,4 @@
 var os = require('os');
-var getos = require('getos');
 
 console.log(`電腦名稱：${os.hostname()}`);
 
@@ -38,11 +37,6 @@ function getFreemem(){
 	}
 	return freemem;
 }
-
-	getos((e, os) => {
-		console.log(JSON.stringify(os));
-	})
-
 
 console.log(`開機時間：${getUptime()}`);
 console.log(`CPU 平台：${os.arch()}`);
