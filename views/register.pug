@@ -17,7 +17,7 @@ html(lang='en')
 						.panel-heading
 							h1 註冊
 						.panel-body
-							form
+							form(action='/insertUser', method='post')
 								.form-group
 									input.form-control(name='email', type='email', placeholder='Email')
 								.form-group
@@ -26,3 +26,17 @@ html(lang='en')
 									input.form-control(name='passwordCheck', type='password', placeholder='Password Check')
 								button.btn.btn-primary(type='submit')
 									| 註冊
+		.modal.fade(tabindex='-1', role='dialog')
+			.modal-dialog(role='document')
+				.modal-content
+					.modal-header
+						button.close(type='button', data-dismiss='modal', aria-label='Close')
+						span(aria-hidden='true') ×
+						h4.modal-title Modal title
+					.modal-body
+						p One fine body…
+					.modal-footer
+					button.btn.btn-default(type='button', data-dismiss='modal') Close
+					button.btn.btn-primary(type='button') Save changes
+
+						
