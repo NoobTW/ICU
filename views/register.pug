@@ -1,0 +1,28 @@
+doctype html
+html(lang='en')
+	head
+		meta(charset='UTF-8')
+		meta(name='viewport', content='width=device-width, initial-scale=1.0')
+		title Register
+		link(rel='stylesheet', href='/public/css/bootstrap.min.css')
+		link(rel='stylesheet', href='/public/css/font-awesome.min.css')
+		link(rel='stylesheet', href='/public/css/all.css')
+		script(src='/public/js/jquery-3.0.0.min.js')
+		script(src='/public/js/bootstrap.min.js')
+	body
+		.container-fluid.relative
+			.row.vcenter
+				.col-md-4.col-md-offset-4
+					.panel.panel-default
+						.panel-heading
+							h1 註冊
+						.panel-body
+							form
+								.form-group
+									input.form-control(name='email', type='email', placeholder='Email')
+								.form-group
+									input.form-control(name='password', type='password', placeholder='Password')
+								.form-group
+									input.form-control(name='passwordCheck', type='password', placeholder='Password Check')
+								button.btn.btn-primary(type='submit')
+									| 註冊
