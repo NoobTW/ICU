@@ -17,14 +17,6 @@ app
 //.use(cors())
 //.use(logger({stream: logFile}))
 
-passport.use(new FacebookStrategy({
-	clientID: '1800155283585541',
-	clientSecret: '5f559de2468c506036c10164a0c8adff',
-	callbackURL: 'http://localhost:10150/auth/facebook/callback'
-}, (accessToken, refreshToken, profile, done) => {
-	done();
-}));
-
 app.listen(port, () => {
 	console.log("SERVER STARTED");
 });
