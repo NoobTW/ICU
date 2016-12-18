@@ -1,0 +1,21 @@
+{
+  "name": "icu",
+  "version": "0.1.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "mocha test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NoobTW/ICU.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NoobTW/ICU/issues"
+  },
+  "homepage": "https://github.com/NoobTW/ICU#readme",
+  "dependencies": {
+  }
+}
