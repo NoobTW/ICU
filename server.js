@@ -41,8 +41,12 @@ function loginCheck(email, password, callback) {
 	MongoClient.connect(url, function(err, db) {
 		var collection = db.collection('restaurants');
 		collection.find({'email': email}).toArray(function(err, docs) {
-			if (password === docs[0].password) {
-				callback(true);
+			if(!err && docs.length){
+				if(password === docs[0].password){
+					callback(true);
+				}else{
+					callback(false);
+				}
 			}else{
 				callback(false);
 			}
