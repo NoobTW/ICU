@@ -37,7 +37,6 @@ app
 .get('/', (req, res) => {
 	var sess = req.session;
 	if(sess.email){
-		console.log(sess.email);
 		res.render('dashboard', {
 			email: sess.email
 		});
