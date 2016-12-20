@@ -93,7 +93,6 @@ app
 					result = {
 						result: -999
 					};
-					console.log(err);
 					res.writeHead(500, MIME_JSON);
 					res.write(JSON.stringify(result));
 					res.end();
@@ -186,13 +185,15 @@ app
 			if(!err && body){
 				request({url:'https://graph.facebook.com/me?fields=name,email&access_token=' + access_token}, (err, response, body) => {
 					if(!err){
-						var data = body;
+						var data = JSON.parse(body);
 						mc.connect(HOST_MONGO, (err, db) => {
 							if(!err && db){
 								var collection = db.collection('user');
-								collection.find({'email': data.eamil}).toArray((err, docs) => {
+								collection.find({'email': data.email}).toArray((err, docs) => {
 									if(!err && docs.length){
 										sess.email = data.email;
+										res.redirect('/');
+										res.end();
 									}else if(!err){
 										collection.insert({
 											email: data.email,
