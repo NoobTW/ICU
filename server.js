@@ -13,6 +13,7 @@ var app = express();
 
 const HOST_MONGO = 'mongodb://139.59.224.238:27017/test';
 const port = process.env.PORT || 10150;
+const PORT_ICU_CLIENT = 10854;
 const FB_APP_ID = '1800155283585541';
 const FB_APP_KEY = '5f559de2468c506036c10164a0c8adff';
 const MIME_JSON = {'Content-Type': 'application/javascript'};
@@ -151,6 +152,43 @@ app
 			}
 		});
 	});
+})
+
+.post('/logout', (req, res) => {
+	req.session.destroy();
+	var result = {
+		result: 0
+	};
+	res.writeHead(200, MIME_JSON);
+	res.write(JSON.stringify(result));
+	res.end();
+})
+
+.get('/machine', (req, res) => {
+	var data = req.query;
+	if(data.ip){
+		request.get('http://' + data.ip + ':' + PORT_ICU_CLIENT + '/status', {}, (err, resp, body) => {
+			if(!err && resp){
+				res.writeHead(200, MIME_JSON);
+				res.write(JSON.stringify(body));
+				res.end();
+			}else{
+				var result = {
+					result: -3
+				};
+				res.writeHead(400, MIME_JSON);
+				res.write(JSON.stringify(result));
+				res.end();
+			}
+		});
+	}else{
+		var result = {
+			result: -1
+		};
+		res.writeHead(400, MIME_JSON);
+		res.write(JSON.stringify(result));
+		res.end();
+	}
 })
 
 .get('/auth/facebook', (req, res) => {
