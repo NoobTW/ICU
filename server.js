@@ -166,28 +166,42 @@ app
 
 .get('/machine', (req, res) => {
 	var data = req.query;
-	if(data.ip){
-		request.get('http://' + data.ip + ':' + PORT_ICU_CLIENT + '/status', {
-			timeout: 5000
-		}, (err, resp, body) => {
-			if(!err && resp){
-				res.writeHead(200, MIME_JSON);
-				res.write(JSON.stringify(body));
-				res.end();
-			}else{
-				var result = {
-					result: -3
-				};
-				res.writeHead(400, MIME_JSON);
-				res.write(JSON.stringify(result));
-				res.end();
-			}
-		});
+	var sess = req.session;
+
+	if(sess.email){
+		if(data.ip){
+			request.get('http://' + data.ip + ':' + PORT_ICU_CLIENT + '/status', {
+				timeout: 5000
+			}, (err, resp, body) => {
+				let result = {};
+				if(!err && resp){
+					res.writeHead(200, MIME_JSON);
+					result = body;
+					result.result = 0;
+					res.write(JSON.stringify(result));
+					res.end();
+				}else{
+					result = {
+						result: -3
+					};
+					res.writeHead(400, MIME_JSON);
+					res.write(JSON.stringify(result));
+					res.end();
+				}
+			});
+		}else{
+			var result = {
+				result: -1
+			};
+			res.writeHead(400, MIME_JSON);
+			res.write(JSON.stringify(result));
+			res.end();
+		}
 	}else{
 		var result = {
-			result: -1
+			result: -998
 		};
-		res.writeHead(400, MIME_JSON);
+		res.writeHead(401, MIME_JSON);
 		res.write(JSON.stringify(result));
 		res.end();
 	}
@@ -195,26 +209,78 @@ app
 
 .post('/machine', (req, res) => {
 	var data = req.data;
-	if(data.ip){
-		request.get('http://' + data.ip + ':' + PORT_ICU_CLIENT + '/status', {
-			timeout: 5000
-		}, (err, resp, body) => {
-			if(!err && resp){
-				
-			}else{
-				var result = {
-					result: -3
-				};
-				res.writeHead(400, MIME_JSON);
-				res.write(JSON.stringify(result));
-				res.end();
-			}
-		});
+	var sess = req.session;
+
+	if(sess.email){
+		if(data.ip && data.name){
+			request.get('http://' + data.ip + ':' + PORT_ICU_CLIENT + '/status', {
+				timeout: 5000
+			}, (err, resp, body) => {
+				if(!err && resp){
+					mc.connect(HOST_MONGO, (err, db) => {
+						var collection = db.collection('machine');
+						collection.find({'ip': data.ip}).toArray((err, docs) => {
+							if(!err && docs.length){
+								result = {
+									result: -2
+								};
+								res.writeHead(400, MIME_JSON);
+								res.write(JSON.stringify(result));
+								res.end();
+							}else if(!err){
+								collection.insert({
+									ip: data.ip,
+									name: data.name,
+									owner: sess.email
+								}, (err, resp) => {
+									if(!err && resp){
+										result = {
+											result: 0
+										};
+										res.writeHead(200, MIME_JSON);
+										res.write(JSON.stringify(result));
+										res.end();
+									}else{
+										result = {
+											result: -1
+										};
+										res.writeHead(400, MIME_JSON);
+										res.write(JSON.stringify(result));
+										res.end();
+									}
+								});
+							}else{
+								result = {
+									result: -999
+								};
+								res.writeHead(500, MIME_JSON);
+								res.write(JSON.stringify(result));
+								res.end();
+							}
+						});
+					});
+				}else{
+					var result = {
+						result: -3
+					};
+					res.writeHead(400, MIME_JSON);
+					res.write(JSON.stringify(result));
+					res.end();
+				}
+			});
+		}else{
+			var result = {
+				result: -1
+			};
+			res.writeHead(400, MIME_JSON);
+			res.write(JSON.stringify(result));
+			res.end();
+		}
 	}else{
 		var result = {
-			result: -1
+			result: -998
 		};
-		res.writeHead(400, MIME_JSON);
+		res.writeHead(401, MIME_JSON);
 		res.write(JSON.stringify(result));
 		res.end();
 	}
