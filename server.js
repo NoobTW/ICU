@@ -16,7 +16,7 @@ const port = process.env.PORT || 10150;
 const PORT_ICU_CLIENT = 10854;
 const FB_APP_ID = '1800155283585541';
 const FB_APP_KEY = '5f559de2468c506036c10164a0c8adff';
-const MIME_JSON = {'Content-Type': 'application/javascript'};
+const MIME_JSON = {'Content-Type': 'application/json'};
 
 app
 .set('view engine', 'pug')
@@ -167,11 +167,40 @@ app
 .get('/machine', (req, res) => {
 	var data = req.query;
 	if(data.ip){
-		request.get('http://' + data.ip + ':' + PORT_ICU_CLIENT + '/status', {}, (err, resp, body) => {
+		request.get('http://' + data.ip + ':' + PORT_ICU_CLIENT + '/status', {
+			timeout: 5000
+		}, (err, resp, body) => {
 			if(!err && resp){
 				res.writeHead(200, MIME_JSON);
 				res.write(JSON.stringify(body));
 				res.end();
+			}else{
+				var result = {
+					result: -3
+				};
+				res.writeHead(400, MIME_JSON);
+				res.write(JSON.stringify(result));
+				res.end();
+			}
+		});
+	}else{
+		var result = {
+			result: -1
+		};
+		res.writeHead(400, MIME_JSON);
+		res.write(JSON.stringify(result));
+		res.end();
+	}
+})
+
+.post('/machine', (req, res) => {
+	var data = req.data;
+	if(data.ip){
+		request.get('http://' + data.ip + ':' + PORT_ICU_CLIENT + '/status', {
+			timeout: 5000
+		}, (err, resp, body) => {
+			if(!err && resp){
+				
 			}else{
 				var result = {
 					result: -3
