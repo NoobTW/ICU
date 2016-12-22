@@ -167,13 +167,13 @@ app
 .get('/machine', (req, res) => {
 	var data = req.query;
 	var sess = req.session;
+	let result = {};
 
 	if(sess.email){
 		if(data.ip){
 			request.get('http://' + data.ip + ':' + PORT_ICU_CLIENT + '/status', {
 				timeout: 5000
 			}, (err, resp, body) => {
-				let result = {};
 				if(!err && resp){
 					res.writeHead(200, MIME_JSON);
 					result = body;
@@ -190,7 +190,7 @@ app
 				}
 			});
 		}else{
-			var result = {
+			result = {
 				result: -1
 			};
 			res.writeHead(400, MIME_JSON);
@@ -198,7 +198,7 @@ app
 			res.end();
 		}
 	}else{
-		var result = {
+		result = {
 			result: -998
 		};
 		res.writeHead(401, MIME_JSON);
@@ -210,17 +210,17 @@ app
 .post('/machine', (req, res) => {
 	var data = req.body;
 	var sess = req.session;
+	let result = {};
 
 	if(sess.email){
 		if(data.ip && data.name){
 			request.get('http://' + data.ip + ':' + PORT_ICU_CLIENT + '/status', {
 				timeout: 5000
 			}, (err, resp, body) => {
-				if(!err && resp){
+				if(!err && resp && body){
 					mc.connect(HOST_MONGO, (err, db) => {
 						var collection = db.collection('machine');
 						collection.find({'ip': data.ip}).toArray((err, docs) => {
-							console.log("HIIIIIIIIIIIIIIIIIIIIIIIII");
 							if(!err && docs.length){
 								result = {
 									result: -2
@@ -261,7 +261,7 @@ app
 						});
 					});
 				}else{
-					var result = {
+					result = {
 						result: -3
 					};
 					res.writeHead(400, MIME_JSON);
@@ -270,7 +270,7 @@ app
 				}
 			});
 		}else{
-			var result = {
+			result = {
 				result: -1
 			};
 			res.writeHead(400, MIME_JSON);
@@ -278,7 +278,7 @@ app
 			res.end();
 		}
 	}else{
-		var result = {
+		result = {
 			result: -998
 		};
 		res.writeHead(401, MIME_JSON);
@@ -288,7 +288,7 @@ app
 })
 
 .get('/machines', (req, res) => {
-	var data = req.body;
+	//var data = req.query;
 	var sess = req.session;
 
 	if(sess.email){
@@ -300,7 +300,7 @@ app
 					result = {
 						result: 0,
 						machines: docs
-					}
+					};
 					res.writeHead(200, MIME_JSON);
 					res.write(JSON.stringify(result));
 					res.end();
