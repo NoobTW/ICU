@@ -208,7 +208,7 @@ app
 })
 
 .post('/machine', (req, res) => {
-	var data = req.data;
+	var data = req.body;
 	var sess = req.session;
 
 	if(sess.email){
@@ -220,6 +220,7 @@ app
 					mc.connect(HOST_MONGO, (err, db) => {
 						var collection = db.collection('machine');
 						collection.find({'ip': data.ip}).toArray((err, docs) => {
+							console.log("HIIIIIIIIIIIIIIIIIIIIIIIII");
 							if(!err && docs.length){
 								result = {
 									result: -2
@@ -242,9 +243,9 @@ app
 										res.end();
 									}else{
 										result = {
-											result: -1
+											result: -999
 										};
-										res.writeHead(400, MIME_JSON);
+										res.writeHead(500, MIME_JSON);
 										res.write(JSON.stringify(result));
 										res.end();
 									}
@@ -276,6 +277,50 @@ app
 			res.write(JSON.stringify(result));
 			res.end();
 		}
+	}else{
+		var result = {
+			result: -998
+		};
+		res.writeHead(401, MIME_JSON);
+		res.write(JSON.stringify(result));
+		res.end();
+	}
+})
+
+.get('/machines', (req, res) => {
+	var data = req.body;
+	var sess = req.session;
+
+	if(sess.email){
+		mc.connect(HOST_MONGO, (err, db) => {
+			var collection = db.collection('machine');
+			collection.find({owner: sess.email}).toArray((err, docs) => {
+				var result = {};
+				if(!err && docs.length){
+					result = {
+						result: 0,
+						machines: docs
+					}
+					res.writeHead(200, MIME_JSON);
+					res.write(JSON.stringify(result));
+					res.end();
+				}else if(!err){
+					result = {
+						result: -1
+					};
+					res.writeHead(400, MIME_JSON);
+					res.write(JSON.stringify(result));
+					res.end();
+				}else{
+					result = {
+						result: -999
+					};
+					res.writeHead(500, MIME_JSON);
+					res.write(JSON.stringify(result));
+					res.end();
+				}
+			});
+		});
 	}else{
 		var result = {
 			result: -998
