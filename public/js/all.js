@@ -1,9 +1,10 @@
 $(document).ready(function() {
-
-	setTimeout(function(){
+	function load(){
 		$('#loader').fadeOut('slow/400/fast');
 		$('.content').css('display', 'block');
-	}, 500);
+	}
+
+	load();
 
 	$('#loginButton').on('click', function(event) {
 		event.preventDefault();
