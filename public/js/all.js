@@ -4,10 +4,34 @@ $(document).ready(function() {
 			$('#loader').fadeOut('slow/400/fast');
 			$('.content').css('display', 'block');
 		}, 500);
-		
 	}
-
 	load();
+
+	function appendMachineTable() {
+		$.ajax({
+			url: '/machines',
+			type: 'GET',
+			complete: function(jqXHR, textStatus) {
+				var response = $.parseJSON(jqXHR.responseText).result;
+				var machines = $.parseJSON(jqXHR.responseText).machines;
+				if (response === 0) {
+					for (var i = 0; i < machines.length; i++) {
+						$('#machinesTable > tbody:last-child').append(
+							"<tr>"+
+								"<td class='text-center'>" + machines[i].name + "</td>" +
+								"<td>" + machines[i].ip + "</td>" + 
+								// "<td>" + machines[i].os + "</td>" + 
+								// "<td>" + machines[i].uptime + "</td>" +
+								"<td>" + "<button type='button' data-ip=" + machines[i].ip + " class='btn btn-primary'>修改</button>" + "</td>" +  
+								"<td>" + "<button type='button' data-ip=" + machines[i].ip + " class='btn btn-danger'>刪除</button>" + "</td>" +  
+							"</tr>");
+					}
+				}
+			}
+		});
+	}
+	appendMachineTable();
+	
 
 	$('#loginButton').on('click', function(event) {
 		event.preventDefault();
@@ -15,8 +39,8 @@ $(document).ready(function() {
 		var password = $('input[name=password]').val();
 
 		if (email == '' || password == '') {
-			$('.modal-title').text('Warning');
-			$('.modal-body').find('p').text("Email and password can't be empty");
+			$('#alertHeader').text('Warning');
+			$('#alertMessage').find('p').text("Email and password can't be empty");
 			$('.modal').modal('show');
 			return false;
 		}
@@ -31,15 +55,15 @@ $(document).ready(function() {
 	        complete: function(jqXHR, textStatus) {
 	        	var response = $.parseJSON(jqXHR.responseText).result;
 	        	if (response === -1) {
-	        		$('.modal-title').text('Error');
-					$('.modal-body').find('p').text("Email or password is incorrect");
+	        		$('#alertHeader').text('Error');
+					$('#alertMessage').find('p').text("Email or password is incorrect");
 					$('.modal').modal('show');
 					return false;
 	        	}
 
 	        	if (response === -999) {
-	        		$('.modal-title').text('Error');
-					$('.modal-body').find('p').text("Database Error");
+	        		$('#alertHeader').text('Error');
+					$('#alertMessage').find('p').text("Database Error");
 					$('.modal').modal('show');
 					return false;
 	        	}
@@ -59,15 +83,15 @@ $(document).ready(function() {
 		var passwordCheck = $('input[name=passwordCheck]').val();
 		
 		if (email == '' || password == '' || passwordCheck=='') {
-			$('.modal-title').text('Warning');
-			$('.modal-body').find('p').text("Email and password can't be empty");
+			$('#alertHeader').text('Warning');
+			$('#alertMessage').find('p').text("Email and password can't be empty");
 			$('.modal').modal('show');
 			return false;
 		}
 
 		if (password !== passwordCheck) {
-			$('.modal-title').text('Warning');
-			$('.modal-body').find('p').text("Password and Password Check must be the same");
+			$('#alertHeader').text('Warning');
+			$('#alertMessage').find('p').text("Password and Password Check must be the same");
 			$('.modal').modal('show');
 			return false;
 		}
@@ -83,22 +107,22 @@ $(document).ready(function() {
 	        complete: function(jqXHR, textStatus) {
 	        	var response = $.parseJSON(jqXHR.responseText).result;
 	        	if (response === -1) {
-	        		$('.modal-title').text('Error');
-					$('.modal-body').find('p').text("Your information type is incorrect");
+	        		$('#alertHeader').text('Error');
+					$('#alertMessage').find('p').text("Your information type is incorrect");
 					$('.modal').modal('show');
 					return false;
 	        	}
 
 	        	if (response === -2) {
-	        		$('.modal-title').text('Error');
-					$('.modal-body').find('p').text("This is Email have been registered");
+	        		$('#alertHeader').text('Error');
+					$('#alertMessage').find('p').text("This is Email have been registered");
 					$('.modal').modal('show');
 					return false;
 	        	}
 
 	        	if (response === -999) {
-	        		$('.modal-title').text('Error');
-					$('.modal-body').find('p').text("Database Error");
+	        		$('#alertHeader').text('Error');
+					$('#alertMessage').find('p').text("Database Error");
 					$('.modal').modal('show');
 					return false;
 	        	}
@@ -109,4 +133,68 @@ $(document).ready(function() {
 	        }
     	});
 	});
+
+	$('#openAddMachineButton').on('click', function() {
+		$('#addMachineForm').modal('show');
+	});
+
+	$('#addMachineButton').on('click', function() {
+		var machineIp = $('input[name=machine-ip]').val();
+		var machineName = $('input[name=machine-name]').val();
+		var data = JSON.stringify({ip: machineIp, name: machineName});
+		$.ajax({
+	        url: '/machine', 
+	        type: 'POST',
+	        data: data,
+	        contentType: 'application/json; charset=utf-8',
+	        dataType: "json",
+	        complete: function(jqXHR, textStatus) {
+	        	var response = $.parseJSON(jqXHR.responseText).result;
+	        	if (response === -1) {
+	        		$('#alertHeader').text('Error');
+					$('#alertMessage').find('p').text("Your IP type is incorrect");
+					$('.modal').modal('show');
+					return false;
+	        	}
+
+	        	if (response === -2) {
+	        		$('#alertHeader').text('Error');
+					$('#alertMessage').find('p').text("This machine is existed");
+					$('.modal').modal('show');
+					return false;
+	        	}
+
+	        	if (response === -3) {
+	        		$('#alertHeader').text('Error');
+					$('#alertMessage').find('p').text("This machine doesn't response");
+					$('.modal').modal('show');
+					return false;
+	        	}
+
+	        	if (response === -998) {
+	        		$('#alertHeader').text('Error');
+					$('#alertMessage').find('p').text("User isn't login");
+					$('.modal').modal('show');
+					return false;
+	        	}
+
+	        	if (response === -999) {
+	        		$('#alertHeader').text('Error');
+					$('#alertMessage').find('p').text("Database Error");
+					$('.modal').modal('show');
+					return false;
+	        	}
+
+	        	if (response === 0) {
+	        		$('#alertHeader').text('Success');
+					$('#alertMessage').find('p').text("Machine Added!");
+					$('.modal').modal('show');
+					$('#machinesTable > tbody').empty();
+					appendMachineTable();
+					return false;
+	        	}
+	        }
+        });
+	});
+
 });

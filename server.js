@@ -55,7 +55,6 @@ app
 	});
 	sess.destroy(function() {
 		sess.email = sess.email;
-		console.log(sess.email);
 	});
 })
 

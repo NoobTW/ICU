@@ -50,31 +50,30 @@ html(lang='en')
 								.col-sm-4
 									h4
 										i.fa.fa-server.fa-fw
-										|  My Machines
+										|  Add Machines
 								.col-sm-8
 									h4.align-right
-										input.search-machine(type='text', placeholder='Search')
-										button(type='button', id='openAddMachineButton').btn.btn-success
-											i.fa.fa-plus
 										a(href='')
 											i.fa.fa-info-circle
-						.ICU-widget-container.gateway-list
+						.ICU-widget-container.add-machine-form-container.col-md-6.col-md-offset-3
 							.ICU-widget-wrapper
-								.response-table
-									table.ICU-widget-table.table.table-hover#machinesTable
-										thead
-											tr(celpadding='2')
-												th.text-center Name
-												th IP
-												th 修改
-												th 刪除
-												//- th status
-												//- th OS
-												//- th Start Time
-												//- th
-												//- 	button.btn.btn-default(type='button') Select All
-										tbody
-											
+								form.align-right
+									form-group
+										input(type='text', name='machine-ip', placeholder='IP', required='required').form-control
+									button(type='button', id='openAddMachineButton').btn.btn-success.btn-lg.btn-block.
+										Add Machine
+
+.modal.fade(tabindex='-1', role='dialog')
+	.modal-dialog(role='document')
+		.modal-content
+			.modal-header
+				button.close(type='button', data-dismiss='modal', aria-label='Close')
+					span(aria-hidden='true') ×
+				h4.modal-title 
+			.modal-body
+				p 
+			.modal-footer
+				button.btn.btn-default(type='button', data-dismiss='modal') Close
 .modal.fade#addMachineForm(tabindex='-1', role='dialog')
 	.modal-dialog(role='document')
 		.modal-content
@@ -86,19 +85,6 @@ html(lang='en')
 				form
 					.form-group
 						input(name='machine-ip', placeholder='Machine IP').form-control
-					.form-group
-						input(name='machine-name', placeholder='Set your Machine Name').form-control
-			.modal-footer
-				button.btn.btn-success(type='button', id='addMachineButton') Add Machine
-				button.btn.btn-default(type='button', data-dismiss='modal') Close
-.modal.fade(tabindex='-1', role='dialog')
-	.modal-dialog(role='document')
-		.modal-content
-			.modal-header#alertHeader
-				button.close(type='button', data-dismiss='modal', aria-label='Close')
-					span(aria-hidden='true') ×
-				h4.modal-title 
-			.modal-body#alertMessage
-				p 
+					button.btn.btn-success(type='button', id='addMachineButton')
 			.modal-footer
 				button.btn.btn-default(type='button', data-dismiss='modal') Close
