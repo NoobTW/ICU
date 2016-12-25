@@ -46,17 +46,11 @@ app
 	}
 })
 
-.post('/test', (req, res) => {
-	var result = {
-			result: -1
-		};
-		res.writeHead(401, MIME_JSON);
-		res.write(JSON.stringify(result));
-		res.end();
-})
-
 .get('/login', (req, res) => {
-	res.render('login');
+	var sess = req.session;
+	res.render('login', {
+		success: sess.success
+	});
 })
 
 .post('/login', (req, res) => {
@@ -119,11 +113,11 @@ app
 .post('/register', (req, res) => {
 	var data = req.body;
 	var result = {};
-
+	var sess = req.session;
 	mc.connect(HOST_MONGO, (err, db) => {
 		var collection = db.collection('user');
-		collection.find({'email': data.eamil}).toArray((err, docs) => {
-			if(!err && docs.length){
+		collection.find({'email': data.email}).toArray((err, docs) => {
+			if(!err && docs.length !== 0){
 				result = {
 					result: -2
 				};
@@ -136,6 +130,7 @@ app
 					password: data.password
 				}, (err, resp) => {
 					if(!err && resp){
+						sess.success = true;
 						result = {
 							result: 0
 						};

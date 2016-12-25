@@ -38,3 +38,8 @@ html
           p 
         .modal-footer
           button.btn.btn-default(type='button', data-dismiss='modal') Close
+  if success == true
+    script.
+      $('.modal-title').text('Success')
+      $('.modal-body').find('p').text("Register Succeed!")
+      $('.modal').modal('show')

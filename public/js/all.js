@@ -1,7 +1,10 @@
 $(document).ready(function() {
 	function load(){
-		$('#loader').fadeOut('slow/400/fast');
-		$('.content').css('display', 'block');
+		setTimeout(function(){
+			$('#loader').fadeOut('slow/400/fast');
+			$('.content').css('display', 'block');
+		}, 500);
+		
 	}
 
 	load();
@@ -18,17 +21,32 @@ $(document).ready(function() {
 			return false;
 		}
 
+		var data = JSON.stringify({email: email, password: password});
 		$.ajax({
-	        url: '/test', 
+	        url: '/login', 
 	        type: 'POST',
-	        data: {email: email},
+	        data: data,
 	        contentType: 'application/json; charset=utf-8',
 	        dataType: "json",
-	        success: function (data) {
-	            console.log(data);
-	        },
-	        error: function (xhr, status, error) {
-	            console.log(xhr + '\n' + status + '\n' + error);
+	        complete: function(jqXHR, textStatus) {
+	        	var response = $.parseJSON(jqXHR.responseText).result;
+	        	if (response === -1) {
+	        		$('.modal-title').text('Error');
+					$('.modal-body').find('p').text("Email or password is incorrect");
+					$('.modal').modal('show');
+					return false;
+	        	}
+
+	        	if (response === -999) {
+	        		$('.modal-title').text('Error');
+					$('.modal-body').find('p').text("Database Error");
+					$('.modal').modal('show');
+					return false;
+	        	}
+
+	        	if(response === 0) {
+	        		window.location.href('/');
+	        	}
 	        }
     	});
 
@@ -54,8 +72,41 @@ $(document).ready(function() {
 			return false;
 		}
 
-		$.post('/register', {email: email, password: password}, function(data) {
-			console.log($.parseJson(data));
-		});
+		var data = JSON.stringify({email: email, password: password})
+
+		$.ajax({
+	        url: '/register', 
+	        type: 'POST',
+	        data: data,
+	        contentType: 'application/json; charset=utf-8',
+	        dataType: "json",
+	        complete: function(jqXHR, textStatus) {
+	        	var response = $.parseJSON(jqXHR.responseText).result;
+	        	if (response === -1) {
+	        		$('.modal-title').text('Error');
+					$('.modal-body').find('p').text("Your information type is incorrect");
+					$('.modal').modal('show');
+					return false;
+	        	}
+
+	        	if (response === -2) {
+	        		$('.modal-title').text('Error');
+					$('.modal-body').find('p').text("This is Email have been registered");
+					$('.modal').modal('show');
+					return false;
+	        	}
+
+	        	if (response === -999) {
+	        		$('.modal-title').text('Error');
+					$('.modal-body').find('p').text("Database Error");
+					$('.modal').modal('show');
+					return false;
+	        	}
+
+	        	if(response === 0) {
+        			$(location).attr('href', '/login');
+	        	}
+	        }
+    	});
 	});
 });
