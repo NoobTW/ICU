@@ -1,5 +1,10 @@
 $(document).ready(function() {
 
+	setTimeout(function(){
+		$('#loader').fadeOut('slow/400/fast');
+		$('.content').css('display', 'block');
+	}, 500);
+
 	$('#loginButton').on('click', function(event) {
 		event.preventDefault();
 		var email = $('input[name=email]').val();
@@ -12,12 +17,10 @@ $(document).ready(function() {
 			return false;
 		}
 
-		var data = { email: email, password: password };
-		console.log(data);
 		$.ajax({
-	        url: '/login', 
+	        url: '/test', 
 	        type: 'POST',
-	        data: data,
+	        data: {email: email},
 	        contentType: 'application/json; charset=utf-8',
 	        dataType: "json",
 	        success: function (data) {

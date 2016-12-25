@@ -46,6 +46,15 @@ app
 	}
 })
 
+.post('/test', (req, res) => {
+	var result = {
+			result: -1
+		};
+		res.writeHead(401, MIME_JSON);
+		res.write(JSON.stringify(result));
+		res.end();
+})
+
 .get('/login', (req, res) => {
 	res.render('login');
 })
@@ -450,6 +459,16 @@ app
 .get('/public/css/:file', (req, res) => {
 	var file = req.params.file;
 	var f = fs.createReadStream('public/css/' + file);
+	var contentType = 'text/plain';
+	if(file.endsWith('.css')) contentType = 'text/css';
+	if(file.endsWith('.js')) contentType = 'application/javascript';
+	res.writeHead(200, { 'Content-Type': contentType });
+	f.pipe(res);
+})
+
+.get('/public/video/:file', (req, res) => {
+	var file = req.params.file;
+	var f = fs.createReadStream('public/video/' + file);
 	var contentType = 'text/plain';
 	if(file.endsWith('.css')) contentType = 'text/css';
 	if(file.endsWith('.js')) contentType = 'application/javascript';
