@@ -21,7 +21,7 @@ $(document).ready(function() {
 			return false;
 		}
 
-		var data = JSON.stringify({email: email, password: password});
+		var data = JSON.stringify({email: email, password: sha256(password)});
 		$.ajax({
 	        url: '/login', 
 	        type: 'POST',
@@ -45,7 +45,7 @@ $(document).ready(function() {
 	        	}
 
 	        	if(response === 0) {
-	        		window.location.href('/');
+	        		$(location).attr('href', '/');
 	        	}
 	        }
     	});
@@ -57,7 +57,7 @@ $(document).ready(function() {
 		var email = $('input[name=email]').val();
 		var password = $('input[name=password]').val();
 		var passwordCheck = $('input[name=passwordCheck]').val();
-
+		
 		if (email == '' || password == '' || passwordCheck=='') {
 			$('.modal-title').text('Warning');
 			$('.modal-body').find('p').text("Email and password can't be empty");
@@ -72,7 +72,7 @@ $(document).ready(function() {
 			return false;
 		}
 
-		var data = JSON.stringify({email: email, password: password})
+		var data = JSON.stringify({email: email, password: sha256(password)})
 
 		$.ajax({
 	        url: '/register', 

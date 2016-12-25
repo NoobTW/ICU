@@ -6,6 +6,7 @@ var request = require('request');
 var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var config = require('./config');
+var sha256 = require('js-sha256');
 
 var mongo = require('mongodb');
 var mc = mongo.MongoClient;
@@ -48,8 +49,13 @@ app
 
 .get('/login', (req, res) => {
 	var sess = req.session;
+
 	res.render('login', {
 		success: sess.success
+	});
+	sess.destroy(function() {
+		sess.email = sess.email;
+		console.log(sess.email);
 	});
 })
 
