@@ -12,9 +12,22 @@ $(document).ready(function() {
 			return false;
 		}
 
-		$.post('/login', {email: email, password: password}, function(data) {
-			console.log(data);
-		});
+		var data = { email: email, password: password };
+		console.log(data);
+		$.ajax({
+	        url: '/login', 
+	        type: 'POST',
+	        data: data,
+	        contentType: 'application/json; charset=utf-8',
+	        dataType: "json",
+	        success: function (data) {
+	            console.log(data);
+	        },
+	        error: function (xhr, status, error) {
+	            console.log(xhr + '\n' + status + '\n' + error);
+	        }
+    	});
+
 	});
 
 	$('#registerButton').on('click', function(event) {
@@ -38,7 +51,7 @@ $(document).ready(function() {
 		}
 
 		$.post('/register', {email: email, password: password}, function(data) {
-			console.log(data);
+			console.log($.parseJson(data));
 		});
 	});
 });
