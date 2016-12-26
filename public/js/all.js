@@ -7,6 +7,11 @@ $(document).ready(function() {
 	}
 	load();
 
+	function isEmail(email) {
+		var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+		return regex.test(email);
+	}
+
 	function getManchineInfo(machineIP, callback) {
 		var data = JSON.stringify({ip: machineIP});
 		$.ajax({
@@ -90,10 +95,17 @@ $(document).ready(function() {
 		event.preventDefault();
 		var email = $('input[name=email]').val();
 		var password = $('input[name=password]').val();
-
+		
 		if (email == '' || password == '') {
 			$('#alertHeader').text('Warning');
 			$('#alertMessage').find('p').text("Email and password can't be empty");
+			$('#alert').modal('show');
+			return false;
+		}
+
+		if(isEmail(email) === false){
+			$('#alertHeader').text('Warning');
+			$('#alertMessage').find('p').text("Invalid Email");
 			$('#alert').modal('show');
 			return false;
 		}
@@ -154,6 +166,13 @@ $(document).ready(function() {
 		if (email == '' || password == '' || passwordCheck=='') {
 			$('#alertHeader').text('Warning');
 			$('#alertMessage').find('p').text("Email and password can't be empty");
+			$('#alert').modal('show');
+			return false;
+		}
+
+		if(isEmail(email) === false){
+			$('#alertHeader').text('Warning');
+			$('#alertMessage').find('p').text("Invalid Email");
 			$('#alert').modal('show');
 			return false;
 		}
