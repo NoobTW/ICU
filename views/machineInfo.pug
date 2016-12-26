@@ -1,0 +1,113 @@
+doctype html
+html(lang='en')
+	head
+		meta(charset='UTF-8')
+		meta(name='viewport', content='width=device-width, initial-scale=1.0')
+		title Dashboard
+		link(rel='stylesheet', href='/public/css/font-awesome.min.css')
+		link(rel='stylesheet', href='/public/css/bootstrap.min.css')
+		link(rel='stylesheet', href='/public/css/all.css')
+		script(src='/public/js/jquery-3.1.1.min .js')
+		script(src='/public/js/bootstrap.min.js')
+		script(src='/public/js/d3.min.js')
+		script(src='/public/js/all.js')
+	body
+		#loader
+		.fill-screen.content
+			nav.navbar.navbar-inverse
+				.container-fluid
+					.navbar-header
+						a.navbar-brand(href='#')
+							| ICU
+							h1 ICU
+					.collapse.navbar-collapse
+						ul.nav.navbar-nav.navbar-right
+							li.dropdown
+								a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
+									i.fa.fa-user
+									|  #{email}
+								ul.dropdown-menu
+									li
+										a(href='#')#logoutLink
+											i.fa.fa-sign-out
+											|  Logout
+									li
+										a(href='#')
+											i.fa.fa-user
+											|  User Information
+			.fill-screen.ICU-body
+				.ICU-side-nav.container-relative.pull-left
+					ul.nav.nav-pills.nav-stacked
+						li.nav-link.overview
+							a(href='/') Main View
+						li
+							a(href='/') My Machines
+						li
+							a(href='/Alarms') Event/Alarms
+				.ICU-content.container-relative.container-fluid
+					.ICU-widget.col-sm-12.ICU-widget-full-page
+						.ICU-widget-header
+							.row
+								.col-sm-4
+									h4
+										i.fa.fa-server.fa-fw
+										|  #{name}
+						.ICU-widget-container
+							.ICU-widget-wrapper
+								ul.nav.nav-tabs#machineInfoNavBar
+									li.active#machineBaicInfoButton(role='presentation')
+										a(href='#') Basic Info
+									li#machineChartButton(role='presentation')
+										a(href='#') Charts
+									li(role='presentation')
+										a(href='#') Messages
+								.container-fluid#machineInfoContent
+									ul.list-group
+										li.list-group-item#OS OS:  
+										li.list-group-item#upTime Uptime:
+										li.list-group-item#cpuUsage CPU Usage:  
+										li.list-group-item#cpuPlatform CPU Platform:  
+										li.list-group-item#cpuModel CPU Model:  
+										li.list-group-item#cpuCores CPU Cores: 
+										li.list-group-item#load Load:  
+										li.list-group-item#freemem Freemem:  
+										li.list-group-item#mac MAC:  
+
+.modal.fade#addMachineForm(tabindex='-1', role='dialog')
+	.modal-dialog(role='document')
+		.modal-content
+			.modal-header
+				button.close(type='button', data-dismiss='modal', aria-label='Close')
+					span(aria-hidden='true') ×
+				h4.modal-title Add Machine
+			.modal-body
+				form
+					.form-group
+						input(name='machine-ip', placeholder='Machine IP').form-control
+					.form-group
+						input(name='machine-name', placeholder='Set your Machine Name').form-control
+			.modal-footer
+				button.btn.btn-success(type='button', id='addMachineButton') Add Machine
+				button.btn.btn-default(type='button', data-dismiss='modal') Close
+.modal.fade#alert(tabindex='-1', role='dialog')
+	.modal-dialog(role='document')
+		.modal-content
+			.modal-header#alertHeader
+				button.close(type='button', data-dismiss='modal', aria-label='Close')
+					span(aria-hidden='true') ×
+				h4.modal-title 
+			.modal-body#alertMessage
+				p 
+			.modal-footer
+				a.btn.btn-default(href='/') Close
+.modal.fade#machineInfo(tabindex='-1', role='dialog')
+	.modal-dialog(role='document')
+		.modal-content
+			.modal-header#machineInfoHeader
+				button.close(type='button', data-dismiss='modal', aria-label='Close')
+					span(aria-hidden='true') ×
+				h4.modal-title 
+			.modal-body#machineInfoMessage
+				p 
+			.modal-footer
+				button.btn.btn-default(type='button', data-dismiss='modal') Close
