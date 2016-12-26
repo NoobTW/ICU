@@ -27,7 +27,7 @@ html(lang='en')
 									|  #{email}
 								ul.dropdown-menu
 									li
-										a(href='/logout')
+										a(href='#')#logoutLink
 											i.fa.fa-sign-out
 											|  Logout
 									li
@@ -50,30 +50,27 @@ html(lang='en')
 								.col-sm-4
 									h4
 										i.fa.fa-server.fa-fw
-										|  Add Machines
-								.col-sm-8
-									h4.align-right
-										a(href='')
-											i.fa.fa-info-circle
-						.ICU-widget-container.add-machine-form-container.col-md-6.col-md-offset-3
+										|  #{name}
+						.ICU-widget-container
 							.ICU-widget-wrapper
-								form.align-right
-									form-group
-										input(type='text', name='machine-ip', placeholder='IP', required='required').form-control
-									button(type='button', id='openAddMachineButton').btn.btn-success.btn-lg.btn-block.
-										Add Machine
+								ul.nav.nav-tabs#machineInfoNavBar
+									li.active#machineBaicInfoButton(role='presentation')
+										a(href='#') Basic Info
+									li#machineChartButton(role='presentation')
+										a(href='#') Charts
+									li(role='presentation')
+										a(href='#') Messages
+								.container-fluid
+									ul.list-group
+										li.list-group-item#OS OS:  
+										li.list-group-item#upTime Uptime:  
+										li.list-group-item#cpuPlatform CPU Platform:  
+										li.list-group-item#cpuModel CPU Model:  
+										li.list-group-item#cpuCores CPU Cores: 
+										li.list-group-item#load Load:  
+										li.list-group-item#freemem Freemem:  
+										li.list-group-item#mac MAC:  
 
-.modal.fade(tabindex='-1', role='dialog')
-	.modal-dialog(role='document')
-		.modal-content
-			.modal-header
-				button.close(type='button', data-dismiss='modal', aria-label='Close')
-					span(aria-hidden='true') ×
-				h4.modal-title 
-			.modal-body
-				p 
-			.modal-footer
-				button.btn.btn-default(type='button', data-dismiss='modal') Close
 .modal.fade#addMachineForm(tabindex='-1', role='dialog')
 	.modal-dialog(role='document')
 		.modal-content
@@ -85,6 +82,30 @@ html(lang='en')
 				form
 					.form-group
 						input(name='machine-ip', placeholder='Machine IP').form-control
-					button.btn.btn-success(type='button', id='addMachineButton')
+					.form-group
+						input(name='machine-name', placeholder='Set your Machine Name').form-control
+			.modal-footer
+				button.btn.btn-success(type='button', id='addMachineButton') Add Machine
+				button.btn.btn-default(type='button', data-dismiss='modal') Close
+.modal.fade(tabindex='-1', role='dialog')
+	.modal-dialog(role='document')
+		.modal-content
+			.modal-header#alertHeader
+				button.close(type='button', data-dismiss='modal', aria-label='Close')
+					span(aria-hidden='true') ×
+				h4.modal-title 
+			.modal-body#alertMessage
+				p 
+			.modal-footer
+				button.btn.btn-default(type='button', data-dismiss='modal') Close
+.modal.fade#machineInfo(tabindex='-1', role='dialog')
+	.modal-dialog(role='document')
+		.modal-content
+			.modal-header#machineInfoHeader
+				button.close(type='button', data-dismiss='modal', aria-label='Close')
+					span(aria-hidden='true') ×
+				h4.modal-title 
+			.modal-body#machineInfoMessage
+				p 
 			.modal-footer
 				button.btn.btn-default(type='button', data-dismiss='modal') Close

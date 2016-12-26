@@ -7,6 +7,7 @@ var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var config = require('./config');
 var sha256 = require('js-sha256');
+var url = require('url');
 
 var mongo = require('mongodb');
 var mc = mongo.MongoClient;
@@ -171,6 +172,20 @@ app
 	res.writeHead(200, MIME_JSON);
 	res.write(JSON.stringify(result));
 	res.end();
+})
+
+.get('/machineInfo', (req, res) =>{
+	var data = req.query;
+	var sess = req.session;
+	if(sess.email){
+		res.render('machineInfo', {
+			email: sess.email,
+			ip: data.ip,
+			name: data.name
+		});
+	}else{
+		res.redirect('/login');
+	}
 })
 
 .get('/machine', (req, res) => {

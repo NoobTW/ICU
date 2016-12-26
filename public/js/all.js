@@ -31,9 +31,10 @@ $(document).ready(function() {
 				var machines = $.parseJSON(jqXHR.responseText).machines;
 				if (response === 0) {
 					for (var i = 0; i < machines.length; i++) {
+						var machineInfoURL = "machineInfo?ip=" + machines[i].ip + "&name=" + machines[i].name;
 						$('#machinesTable > tbody:last-child').append(
 						"<tr>"+
-							"<td class='text-center'>" + "<a href='#' id='displayMachineInfo' class='btn btn-info' data-ip='" + machines[i].ip + "'>"+"<i class='fa fa-eye'></i>" + "</a>" + "</td>" +
+							"<td class='text-center'>" + "<a href='" + machineInfoURL + "' class='btn btn-info'>"+"<i class='fa fa-eye'></i>" + "</a>" + "</td>" +
 							"<td class='text-center'>" + machines[i].name + "</td>" +
 							"<td>" + machines[i].ip + "</td>" +
 							"<td>" + "<button type='button' data-ip='" + machines[i].ip + "' class='btn btn-primary'>修改</button>" + "</td>" +  
@@ -50,17 +51,39 @@ $(document).ready(function() {
 		appendMachineTable();
 	};
 
-	$('#machinesTable').on('click', '#displayMachineInfo', function(event) {
-		event.preventDefault();
-		var ip = $(this).data('ip');
-		getManchineInfo(ip, function(response, machineInfo) {
-			// machineInfo = $.parseJSON(machineInfo);
-			$('#machineInfoHeader').text("Machine Information");
-			$('#machineInfoMessage').find('p').text(machineInfo);
-			$('#machineInfo').modal('show');
-			return false;
+	if ($(location)[0].pathname === '/machineInfo') {
+		var urlSearch = $(location)[0].search;
+		var machineIP = urlSearch.split('&')[0].split('=')[1];
+		getManchineInfo(machineIP, function(response, machineInfo) {
+			machineInfo = $.parseJSON(machineInfo);
+			$('#OS').append(machineInfo.os);
+			$('#upTime').append(machineInfo.uptime);
+			$('#cpuPlatform').append(machineInfo.cpu_platform);
+			$('#cpuModel').append(machineInfo.cpu_model);
+			$('#cpuCores').append(machineInfo.cpu_cores);
+			$('#load').append(machineInfo.load);
+			$('#freemem').append(machineInfo.freemem);
+			$('#mac').append(machineInfo.mac);
 		});
+	}
+
+	$('#machineInfoNavBar').on('click', 'li', function(event) {
+		event.preventDefault();
+		$('#machineInfoNavBar').find('.active').removeClass('active');
+		$(this).addClass('active');
 	});
+
+	// $('#machinesTable').on('click', '#displayMachineInfo', function(event) {
+	// 	event.preventDefault();
+	// 	var ip = $(this).data('ip');
+	// 	getManchineInfo(ip, function(response, machineInfo) {
+	// 		// machineInfo = $.parseJSON(machineInfo);
+	// 		$('#machineInfoHeader').text("Machine Information");
+	// 		$('#machineInfoMessage').find('p').text(machineInfo);
+	// 		$('#machineInfo').modal('show');
+	// 		return false;
+	// 	});
+	// });
 
 	$('#loginButton').on('click', function(event) {
 		event.preventDefault();
