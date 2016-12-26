@@ -28,14 +28,14 @@ html
                 button.btn.btn-success.btn-lg.btn-block#loginButton(type='button') Login
                 a.btn.btn-primary.btn-lg.btn-block(href='/register') Register
                 a.btn.btn-facebookLogin.fa.fa-facebook-official.fa-2x.btn-lg.btn-block(href='/auth/facebook')
-  .modal.fade(tabindex='-1', role='dialog')
+  .modal.fade#alert(tabindex='-1', role='dialog')
     .modal-dialog(role='document')
       .modal-content
-        .modal-header
+        .modal-header#alertHeader
           button.close(type='button', data-dismiss='modal', aria-label='Close')
             span(aria-hidden='true') ×
           h4.modal-title 
-        .modal-body
+        .modal-body#alertMessage
           p 
         .modal-footer
           button.btn.btn-default(type='button', data-dismiss='modal') Close

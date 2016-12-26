@@ -64,6 +64,7 @@ $(document).ready(function() {
 			$('#load').append(machineInfo.load);
 			$('#freemem').append(machineInfo.freemem);
 			$('#mac').append(machineInfo.mac);
+			return false;
 		});
 	}
 
@@ -93,7 +94,7 @@ $(document).ready(function() {
 		if (email == '' || password == '') {
 			$('#alertHeader').text('Warning');
 			$('#alertMessage').find('p').text("Email and password can't be empty");
-			$('.modal').modal('show');
+			$('#alert').modal('show');
 			return false;
 		}
 
@@ -109,14 +110,14 @@ $(document).ready(function() {
 	        	if (response === -1) {
 	        		$('#alertHeader').text('Error');
 					$('#alertMessage').find('p').text("Email or password is incorrect");
-					$('.modal').modal('show');
+					$('#alert').modal('show');
 					return false;
 	        	}
 
 	        	if (response === -999) {
 	        		$('#alertHeader').text('Error');
 					$('#alertMessage').find('p').text("Database Error");
-					$('.modal').modal('show');
+					$('#alert').modal('show');
 					return false;
 	        	}
 
@@ -153,14 +154,14 @@ $(document).ready(function() {
 		if (email == '' || password == '' || passwordCheck=='') {
 			$('#alertHeader').text('Warning');
 			$('#alertMessage').find('p').text("Email and password can't be empty");
-			$('.modal').modal('show');
+			$('#alert').modal('show');
 			return false;
 		}
 
 		if (password !== passwordCheck) {
 			$('#alertHeader').text('Warning');
 			$('#alertMessage').find('p').text("Password and Password Check must be the same");
-			$('.modal').modal('show');
+			$('#alert').modal('show');
 			return false;
 		}
 
@@ -177,21 +178,21 @@ $(document).ready(function() {
 	        	if (response === -1) {
 	        		$('#alertHeader').text('Error');
 					$('#alertMessage').find('p').text("Your information type is incorrect");
-					$('.modal').modal('show');
+					$('#alert').modal('show');
 					return false;
 	        	}
 
 	        	if (response === -2) {
 	        		$('#alertHeader').text('Error');
 					$('#alertMessage').find('p').text("This is Email have been registered");
-					$('.modal').modal('show');
+					$('#alert').modal('show');
 					return false;
 	        	}
 
 	        	if (response === -999) {
 	        		$('#alertHeader').text('Error');
 					$('#alertMessage').find('p').text("Database Error");
-					$('.modal').modal('show');
+					$('#alert').modal('show');
 					return false;
 	        	}
 
@@ -221,42 +222,42 @@ $(document).ready(function() {
 	        	if (response === -1) {
 	        		$('#alertHeader').text('Error');
 					$('#alertMessage').find('p').text("Your IP type is incorrect");
-					$('.modal').modal('show');
+					$('#alert').modal('show');
 					return false;
 	        	}
 
 	        	if (response === -2) {
 	        		$('#alertHeader').text('Error');
 					$('#alertMessage').find('p').text("This machine is existed");
-					$('.modal').modal('show');
+					$('#alert').modal('show');
 					return false;
 	        	}
 
 	        	if (response === -3) {
 	        		$('#alertHeader').text('Error');
 					$('#alertMessage').find('p').text("This machine doesn't response");
-					$('.modal').modal('show');
+					$('#alert').modal('show');
 					return false;
 	        	}
 
 	        	if (response === -998) {
 	        		$('#alertHeader').text('Error');
 					$('#alertMessage').find('p').text("User isn't login");
-					$('.modal').modal('show');
+					$('#alert').modal('show');
 					return false;
 	        	}
 
 	        	if (response === -999) {
 	        		$('#alertHeader').text('Error');
 					$('#alertMessage').find('p').text("Database Error");
-					$('.modal').modal('show');
+					$('#alert').modal('show');
 					return false;
 	        	}
 
 	        	if (response === 0) {
 	        		$('#alertHeader').text('Success');
 					$('#alertMessage').find('p').text("Machine Added!");
-					$('.modal').modal('show');
+					$('#alert').modal('show');
 					$('#machinesTable > tbody').empty();
 					appendMachineTable();
 					return false;
