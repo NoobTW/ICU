@@ -2,8 +2,8 @@ var os = require('os');
 
 console.log(`電腦名稱：${os.hostname()}`);
 
-function getUptime(){
-	var uptime = Math.floor(os.uptime());
+function getUptime(a){
+	var uptime = Math.floor(a);
 	var uptimeD = Math.floor(uptime / 86400);
 	var uptimeH = Math.floor(uptime % 86400 / 3600);
 	var uptimeM = Math.floor(uptime % 3600 / 60);

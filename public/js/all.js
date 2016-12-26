@@ -27,6 +27,20 @@ $(document).ready(function() {
 		});
 	}
 
+	function getUptime(a){
+		var uptime = Math.floor(a);
+		var uptimeD = Math.floor(uptime / 86400);
+		var uptimeH = Math.floor(uptime % 86400 / 3600);
+		var uptimeM = Math.floor(uptime % 3600 / 60);
+		var uptimeS = uptime % 60;
+		var uptimeString = '';
+		uptimeString += uptimeD !== 0 ? uptimeD + '天' : '';
+		uptimeString += uptimeH !== 0 ? uptimeH + '時' : '';
+		uptimeString += uptimeM !== 0 ? uptimeM + '分' : '';
+		uptimeString += uptimeS + '秒';
+		return uptimeString;
+	}
+
 	function appendMachineTable() {
 		$.ajax({
 			url: '/machines',
@@ -55,31 +69,40 @@ $(document).ready(function() {
 	if ($(location)[0].pathname === '/') {
 		appendMachineTable();
 	};
-
-	if ($(location)[0].pathname === '/machineInfo') {
-		var urlSearch = $(location)[0].search;
-		var machineIP = urlSearch.split('&')[0].split('=')[1];
-		getManchineInfo(machineIP, function(response, machineInfo) {
-			console.log(machineInfo);
-			if (response !== 0) {
-				$('#alertHeader').text('Warning');
-				$('#alertMessage').find('p').text("Your Machine is Dead ASshole");
-				$('#alert').modal('show');
-				return false;
-			}
-			if (response === 0) {
-				$('#OS').append(machineInfo.os);
-				$('#upTime').append(machineInfo.uptime);
-				$('#cpuPlatform').append(machineInfo.cpu_platform);
-				$('#cpuModel').append(machineInfo.cpu_model);
-				$('#cpuCores').append(machineInfo.cpu_cores);
-				$('#load').append(machineInfo.load);
-				$('#freemem').append(machineInfo.freemem);
-				$('#mac').append(machineInfo.mac);
-				return false;
-			}
-		});
-	}
+	
+	setInterval(function(){
+		if ($(location)[0].pathname === '/machineInfo') {
+			var urlSearch = $(location)[0].search;
+			var machineIP = urlSearch.split('&')[0].split('=')[1];
+			getManchineInfo(machineIP, function(response, machineInfo) {
+					$('#OS').text("OS:");
+					$('#upTime').text("UpTime:");
+					$('#cpuPlatform').text("CPU Platform:");
+					$('#cpuModel').text("CPU Model:");
+					$('#cpuCores').text("CPU Cores:");
+					$('#load').text("Load:");
+					$('#freemem').text("Freemem:");
+					$('#mac').text("MAC:");
+					if (response !== 0) {
+						$('#alertHeader').text('Warning');
+						$('#alertMessage').find('p').text("Your Machine is Dead, ASshole");
+						$('#alert').modal('show');
+						return false;
+					}
+					if (response === 0) {
+						$('#OS').append(machineInfo.os);
+						$('#upTime').append(getUptime(machineInfo.uptime));
+						$('#cpuPlatform').append(machineInfo.cpu_platform);
+						$('#cpuModel').append(machineInfo.cpu_model);
+						$('#cpuCores').append(machineInfo.cpu_cores);
+						$('#load').append(machineInfo.load[0] + ', ' + machineInfo.load[1] + ', ' + machineInfo.load[2]);
+						$('#freemem').append(machineInfo.freemem);
+						$('#mac').append(machineInfo.mac);
+						return false;
+					}
+			});
+		}
+	},1000);
 
 	$('#machineInfoNavBar').on('click', 'li', function(event) {
 		event.preventDefault();

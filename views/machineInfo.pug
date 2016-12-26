@@ -8,8 +8,9 @@ html(lang='en')
 		link(rel='stylesheet', href='/public/css/bootstrap.min.css')
 		link(rel='stylesheet', href='/public/css/all.css')
 		script(src='/public/js/jquery-3.1.1.min .js')
-		script(src='/public/js/all.js')
 		script(src='/public/js/bootstrap.min.js')
+		script(src='/public/js/d3.min.js')
+		script(src='/public/js/all.js')
 	body
 		#loader
 		.fill-screen.content
@@ -97,7 +98,7 @@ html(lang='en')
 			.modal-body#alertMessage
 				p 
 			.modal-footer
-				button.btn.btn-default(type='button', data-dismiss='modal') Close
+				a.btn.btn-default(href='/') Close
 .modal.fade#machineInfo(tabindex='-1', role='dialog')
 	.modal-dialog(role='document')
 		.modal-content
