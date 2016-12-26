@@ -125,8 +125,6 @@ $(document).ready(function() {
 		
 	});
 		
-			// 圖就塞到append裡面
-
 	// $('#machinesTable').on('click', '#displayMachineInfo', function(event) {
 	// 	event.preventDefault();
 	// 	var ip = $(this).data('ip');
