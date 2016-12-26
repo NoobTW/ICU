@@ -20,8 +20,8 @@ $(document).ready(function() {
 			dataType: 'application/json; charset=utf-8',
 			data: {ip: machineIP},
 			complete: function(jqXHR, textStatus) {
-				var response = $.parseJSON(jqXHR.responseText).result;
 				var machineInfo = $.parseJSON(jqXHR.responseText);
+				var response = machineInfo.result;
 				callback(response, machineInfo);
 			}
 		});
@@ -60,16 +60,24 @@ $(document).ready(function() {
 		var urlSearch = $(location)[0].search;
 		var machineIP = urlSearch.split('&')[0].split('=')[1];
 		getManchineInfo(machineIP, function(response, machineInfo) {
-			machineInfo = $.parseJSON(machineInfo);
-			$('#OS').append(machineInfo.os);
-			$('#upTime').append(machineInfo.uptime);
-			$('#cpuPlatform').append(machineInfo.cpu_platform);
-			$('#cpuModel').append(machineInfo.cpu_model);
-			$('#cpuCores').append(machineInfo.cpu_cores);
-			$('#load').append(machineInfo.load);
-			$('#freemem').append(machineInfo.freemem);
-			$('#mac').append(machineInfo.mac);
-			return false;
+			console.log(machineInfo);
+			if (response !== 0) {
+				$('#alertHeader').text('Warning');
+				$('#alertMessage').find('p').text("Your Machine is Dead ASshole");
+				$('#alert').modal('show');
+				return false;
+			}
+			if (response === 0) {
+				$('#OS').append(machineInfo.os);
+				$('#upTime').append(machineInfo.uptime);
+				$('#cpuPlatform').append(machineInfo.cpu_platform);
+				$('#cpuModel').append(machineInfo.cpu_model);
+				$('#cpuCores').append(machineInfo.cpu_cores);
+				$('#load').append(machineInfo.load);
+				$('#freemem').append(machineInfo.freemem);
+				$('#mac').append(machineInfo.mac);
+				return false;
+			}
 		});
 	}
 
