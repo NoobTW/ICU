@@ -33,10 +33,11 @@ $(document).ready(function() {
 					for (var i = 0; i < machines.length; i++) {
 						$('#machinesTable > tbody:last-child').append(
 						"<tr>"+
+							"<td class='text-center'>" + "<a href='#' id='displayMachineInfo' class='btn btn-info' data-ip='" + machines[i].ip + "'>"+"<i class='fa fa-eye'></i>" + "</a>" + "</td>" +
 							"<td class='text-center'>" + machines[i].name + "</td>" +
 							"<td>" + machines[i].ip + "</td>" +
-							"<td>" + "<button type='button' data-ip=" + machines[i].ip + " class='btn btn-primary'>修改</button>" + "</td>" +  
-							"<td>" + "<button type='button' data-ip=" + machines[i].ip + " class='btn btn-danger'>刪除</button>" + "</td>" + 
+							"<td>" + "<button type='button' data-ip='" + machines[i].ip + "' class='btn btn-primary'>修改</button>" + "</td>" +  
+							"<td>" + "<button type='button' data-ip='" + machines[i].ip + "' class='btn btn-danger'>刪除</button>" + "</td>" + 
 						"</tr>"
 						);
 					}
@@ -45,10 +46,21 @@ $(document).ready(function() {
 		});
 	}
 	
-
 	if ($(location)[0].pathname === '/') {
 		appendMachineTable();
 	};
+
+	$('#machinesTable').on('click', '#displayMachineInfo', function(event) {
+		event.preventDefault();
+		var ip = $(this).data('ip');
+		getManchineInfo(ip, function(response, machineInfo) {
+			// machineInfo = $.parseJSON(machineInfo);
+			$('#machineInfoHeader').text("Machine Information");
+			$('#machineInfoMessage').find('p').text(machineInfo);
+			$('#machineInfo').modal('show');
+			return false;
+		});
+	});
 
 	$('#loginButton').on('click', function(event) {
 		event.preventDefault();
