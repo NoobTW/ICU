@@ -112,6 +112,18 @@ $(document).ready(function() {
 		$(this).addClass('active');
 	});
 
+// 你們看這裡就好，有問題密我
+	$('#machineInfoNavBar').on('click', '#machineChartButton', function() {
+		$('#machineInfoContent').empty();
+		setInterval(function(){
+			getManchineInfo(machineIP, function(response, machineInfo) {
+				// 下面這個資料是我們要畫折線圖的資料
+				console.log(machineInfo.cpu_usage); 
+		}, 1000);
+			// 圖就塞到append裡面
+		$('#machineInfoContent').append();
+	});
+
 	// $('#machinesTable').on('click', '#displayMachineInfo', function(event) {
 	// 	event.preventDefault();
 	// 	var ip = $(this).data('ip');
