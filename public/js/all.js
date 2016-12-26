@@ -7,6 +7,21 @@ $(document).ready(function() {
 	}
 	load();
 
+	function getManchineInfo(machineIP, callback) {
+		var data = JSON.stringify({ip: machineIP});
+		$.ajax({
+			url: '/machine',
+			type: 'GET',
+			dataType: 'application/json; charset=utf-8',
+			data: {ip: machineIP},
+			complete: function(jqXHR, textStatus) {
+				var response = $.parseJSON(jqXHR.responseText).result;
+				var machineInfo = $.parseJSON(jqXHR.responseText);
+				callback(response, machineInfo);
+			}
+		});
+	}
+
 	function appendMachineTable() {
 		$.ajax({
 			url: '/machines',
@@ -17,14 +32,13 @@ $(document).ready(function() {
 				if (response === 0) {
 					for (var i = 0; i < machines.length; i++) {
 						$('#machinesTable > tbody:last-child').append(
-							"<tr>"+
-								"<td class='text-center'>" + machines[i].name + "</td>" +
-								"<td>" + machines[i].ip + "</td>" + 
-								// "<td>" + machines[i].os + "</td>" + 
-								// "<td>" + machines[i].uptime + "</td>" +
-								"<td>" + "<button type='button' data-ip=" + machines[i].ip + " class='btn btn-primary'>修改</button>" + "</td>" +  
-								"<td>" + "<button type='button' data-ip=" + machines[i].ip + " class='btn btn-danger'>刪除</button>" + "</td>" +  
-							"</tr>");
+						"<tr>"+
+							"<td class='text-center'>" + machines[i].name + "</td>" +
+							"<td>" + machines[i].ip + "</td>" +
+							"<td>" + "<button type='button' data-ip=" + machines[i].ip + " class='btn btn-primary'>修改</button>" + "</td>" +  
+							"<td>" + "<button type='button' data-ip=" + machines[i].ip + " class='btn btn-danger'>刪除</button>" + "</td>" + 
+						"</tr>"
+						);
 					}
 				}
 			}

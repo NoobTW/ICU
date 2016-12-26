@@ -164,7 +164,7 @@ app
 })
 
 .post('/logout', (req, res) => {
-	req.session.destroy();
+	req.session	.destroy();
 	var result = {
 		result: 0
 	};
