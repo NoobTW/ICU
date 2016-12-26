@@ -77,6 +77,7 @@ $(document).ready(function() {
 			getManchineInfo(machineIP, function(response, machineInfo) {
 					$('#OS').text("OS:");
 					$('#upTime').text("UpTime:");
+					$('#cpuUsage').text("CPU Usage:");
 					$('#cpuPlatform').text("CPU Platform:");
 					$('#cpuModel').text("CPU Model:");
 					$('#cpuCores').text("CPU Cores:");
@@ -92,6 +93,7 @@ $(document).ready(function() {
 					if (response === 0) {
 						$('#OS').append(machineInfo.os);
 						$('#upTime').append(getUptime(machineInfo.uptime));
+						$('#cpuUsage').append(machineInfo.cpu_usage + '%');
 						$('#cpuPlatform').append(machineInfo.cpu_platform);
 						$('#cpuModel').append(machineInfo.cpu_model);
 						$('#cpuCores').append(machineInfo.cpu_cores);
