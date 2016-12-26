@@ -200,6 +200,7 @@ app
 			}, (err, resp, body) => {
 				if(!err && resp){
 					res.writeHead(200, MIME_JSON);
+					body = JSON.parse(body);
 					result = body;
 					result.result = 0;
 					res.write(JSON.stringify(result));
