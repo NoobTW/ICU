@@ -30,8 +30,11 @@ $(document).ready(function() {
 			}
 		});
 	}
-	appendMachineTable();
 	
+
+	if ($(location)[0].pathname === '/') {
+		appendMachineTable();
+	};
 
 	$('#loginButton').on('click', function(event) {
 		event.preventDefault();
@@ -74,6 +77,22 @@ $(document).ready(function() {
 	        }
     	});
 
+	});
+
+	$('#logoutLink').on('click', function(event) {
+		event.preventDefault();
+		$.ajax({
+			url: '/logout',
+			type: 'POST',
+			dataType: 'application/json; charset=utf-8',
+			data: {},
+			complete: function(jqXHR, textStatus) {
+				var response = $.parseJSON(jqXHR.responseText).result;
+				if (response === 0) {
+					$(location).attr('href', '/login');
+				}
+			}
+		});
 	});
 
 	$('#registerButton').on('click', function(event) {
