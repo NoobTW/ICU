@@ -115,13 +115,70 @@ $(document).ready(function() {
 	// 你們看這裡就好，有問題密我
 	$('#machineInfoNavBar').on('click', '#machineChartButton', function() {
 		$('#machineInfoContent').empty();
+		$('#machineInfoContent').append("<script src='//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js'></script><div id='graph' class='aGraph'></div>");
+		$('#machineInfoContent').append("<style>path {stroke: steelblue;stroke-width: 2;fill: none;}.axis {shape-rendering: crispEdges;}.x.axis line {stroke: lightgrey;}.x.axis .minor {stroke-opacity: .5;}.x.axis path {display: none;}.y.axis line, .y.axis path {fill: none;stroke: #000;}</style>");
+
 		var urlSearch = $(location)[0].search;
 		var machineIP = urlSearch.split('&')[0].split('=')[1];
 		setInterval(function() {
-			getManchineInfo(machineIP, function(response, machineInfo) {
+			getManchineInfo(machineIP, function(response, machineInfo){
 				console.log(machineInfo.cpu_usage);
 			});
 		}, 1000);
+		var data = [];
+		var count = 0;
+		function render(data){
+  			document.getElementById("graph").innerHTML = "";
+			var m = [80, 80, 80, 80]; // margins
+			var w = 1000 - m[1] - m[3]; // width
+			var h = 400 - m[0] - m[2]; // height
+
+
+			var x = d3.scale.linear().domain([0+count, data.length+count]).range([0, w]);
+			var y = d3.scale.linear().domain([0, 100]).range([h, 0]);
+			var line = d3.svg.line()
+				.x(function(d,i) {
+					return x(i+count);
+				})
+				.y(function(d) {
+					return y(d);
+				})
+
+				var graph = d3.select("#graph").append("svg:svg")
+				      .attr("width", w + m[1] + m[3])
+				      .attr("height", h + m[0] + m[2])
+				    .append("svg:g")
+				      .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
+
+				var xAxis = d3.svg.axis().scale(x).tickSize(-h).tickSubdivide(true);
+				graph.append("svg:g")
+				      .attr("class", "x axis")
+				      .attr("transform", "translate(0," + h + ")")
+				      .call(xAxis);
+
+
+				var yAxisLeft = d3.svg.axis().scale(y).ticks(4).orient("left");
+				graph.append("svg:g")
+				      .attr("class", "y axis")
+				      .attr("transform", "translate(-25,0)")
+				      .call(yAxisLeft);
+
+	  			graph.append("svg:path").attr("d", line(data));
+  			}
+
+  			function add(a){
+          if(data.length>30){
+  				data.shift();
+          }
+  				data.push(a);
+  				count++;
+  				render(data);
+  			}
+  			setInterval(function(){
+  			getManchineInfo(machineIP, function(response, machineInfo){
+				add(machineInfo.cpu_usage);
+			});	
+  			}, 1000);
 		
 	});
 		
