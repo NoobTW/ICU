@@ -26,7 +26,7 @@ app
 .use(bodyParser.json())
 .use(session({
 	secret: config.secret.session,
-	cookie: { maxAge: 10 * 60 * 1000 },
+	cookie: { maxAge: 100 * 60 * 1000 },
 	resave: false,
 	saveUninitialized: true
 }))
