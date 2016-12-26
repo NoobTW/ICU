@@ -7,57 +7,110 @@ html(lang='en')
 		link(rel='stylesheet', href='/public/css/font-awesome.min.css')
 		link(rel='stylesheet', href='/public/css/bootstrap.min.css')
 		link(rel='stylesheet', href='/public/css/all.css')
-		script(src='/public/js/jquery-3.0.0.min.js')
+		script(src='/public/js/jquery-3.1.1.min .js')
+		script(src='/public/js/all.js')
 		script(src='/public/js/bootstrap.min.js')
 	body
-		nav.navbar.navbar-inverse
-			.container-fluid
-				.navbar-header
-					a.navbar-brand(href='#')
-						span.fa.fa-home
-						h1.text-hide ICU
-				p.navbar-text Give All Machine Information For You
-				.btn-group.navbar-right
-					a.navbar-text(href='') #{email}
-		.container-fluid(style='height: 100%;')
-			.row
-				.col-md-2
-					.list-group
-						a.list-group-item.active(href='#')
-							h4.list-group-item-heading Panel
-						a.list-group-item.list-group-item-info(href='') Cras justo odio
-						a.list-group-item.list-group-item-info(href='') Cras justo odio
-						a.list-group-item.list-group-item-info(href='') Cras justo odio
-						a.list-group-item.list-group-item-info(href='') Cras justo odio
-						a.list-group-item.list-group-item-info(href='') Cras justo odio
-				.col-md-10
-					.panel.panel-default
-						.panel-heading Panel heading without title
-						.panel-body
-							| Panel content
-						table.table.table-striped.table-hover
-							thead
-								tr
-									th IP
-									th CPU Temperature
-									th Process
-									th Memory Used
-									th Login Number
-							tr
-								td 140.127.220.78
-								td 1000 degree
-								td 999
-								td 0.1%
-								td 1
-							tr
-								td ...
-								td ...
-								td ...
-								td ...
-								td ...
-							tr
-								td ...
-								td ...
-								td ...
-								td ...
-								td ...
+		#loader
+		.fill-screen.content
+			nav.navbar.navbar-inverse
+				.container-fluid
+					.navbar-header
+						a.navbar-brand(href='#')
+							| ICU
+							h1 ICU
+					.collapse.navbar-collapse
+						ul.nav.navbar-nav.navbar-right
+							li.dropdown
+								a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
+									i.fa.fa-user
+									|  #{email}
+								ul.dropdown-menu
+									li
+										a(href='#')#logoutLink
+											i.fa.fa-sign-out
+											|  Logout
+									li
+										a(href='#')
+											i.fa.fa-user
+											|  User Information
+			.fill-screen.ICU-body
+				.ICU-side-nav.container-relative.pull-left
+					ul.nav.nav-pills.nav-stacked
+						li.nav-link.overview
+							a(href='/') Main View
+						li
+							a(href='/') My Machines
+						li
+							a(href='/Alarms') Event/Alarms
+				.ICU-content.container-relative.container-fluid
+					.ICU-widget.col-sm-12.ICU-widget-full-page
+						.ICU-widget-header
+							.row
+								.col-sm-4
+									h4
+										i.fa.fa-server.fa-fw
+										|  My Machines
+								.col-sm-8
+									h4.align-right
+										input.search-machine(type='text', placeholder='Search')
+										button(type='button', id='openAddMachineButton').btn.btn-success
+											i.fa.fa-plus
+										a(href='')
+											i.fa.fa-info-circle
+						.ICU-widget-container.gateway-list
+							.ICU-widget-wrapper
+								.response-table
+									table.ICU-widget-table.table.table-hover#machinesTable
+										thead
+											tr(celpadding='2')
+												th.text-center Check
+												th.text-center Name
+												th IP
+												//- th OS
+												//- th Start Time
+												th 修改
+												th 刪除
+												//- th status
+												//- th
+												//- 	button.btn.btn-default(type='button') Select All
+										tbody
+											
+.modal.fade#addMachineForm(tabindex='-1', role='dialog')
+	.modal-dialog(role='document')
+		.modal-content
+			.modal-header
+				button.close(type='button', data-dismiss='modal', aria-label='Close')
+					span(aria-hidden='true') ×
+				h4.modal-title Add Machine
+			.modal-body
+				form
+					.form-group
+						input(name='machine-ip', placeholder='Machine IP').form-control
+					.form-group
+						input(name='machine-name', placeholder='Set your Machine Name').form-control
+			.modal-footer
+				button.btn.btn-success(type='button', id='addMachineButton') Add Machine
+				button.btn.btn-default(type='button', data-dismiss='modal') Close
+.modal.fade#alert(tabindex='-1', role='dialog')
+	.modal-dialog(role='document')
+		.modal-content
+			.modal-header#alertHeader
+				button.close(type='button', data-dismiss='modal', aria-label='Close')
+					span(aria-hidden='true') ×
+				h4.modal-title 
+			.modal-body#alertMessage
+				p 
+			.modal-footer
+				button.btn.btn-default(type='button', data-dismiss='modal') Close
+.modal.fade#machineInfo(tabindex='-1', role='dialog')
+	.modal-dialog(role='document')
+		.modal-content
+			.modal-header#machineInfoHeader
+				button.close(type='button', data-dismiss='modal', aria-label='Close')
+					span(aria-hidden='true') ×
+				h4.modal-title 
+			.modal-body#machineInfoMessage
+				p 
+			.modal-footer
+				button.btn.btn-default(type='button', data-dismiss='modal') Close

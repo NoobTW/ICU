@@ -6,6 +6,8 @@ var request = require('request');
 var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var config = require('./config');
+var sha256 = require('js-sha256');
+var url = require('url');
 
 var mongo = require('mongodb');
 var mc = mongo.MongoClient;
@@ -47,7 +49,14 @@ app
 })
 
 .get('/login', (req, res) => {
-	res.render('login');
+	var sess = req.session;
+
+	res.render('login', {
+		success: sess.success
+	});
+	sess.destroy(function() {
+		sess.email = sess.email;
+	});
 })
 
 .post('/login', (req, res) => {
@@ -110,11 +119,11 @@ app
 .post('/register', (req, res) => {
 	var data = req.body;
 	var result = {};
-
+	var sess = req.session;
 	mc.connect(HOST_MONGO, (err, db) => {
 		var collection = db.collection('user');
-		collection.find({'email': data.eamil}).toArray((err, docs) => {
-			if(!err && docs.length){
+		collection.find({'email': data.email}).toArray((err, docs) => {
+			if(!err && docs.length !== 0){
 				result = {
 					result: -2
 				};
@@ -127,6 +136,7 @@ app
 					password: data.password
 				}, (err, resp) => {
 					if(!err && resp){
+						sess.success = true;
 						result = {
 							result: 0
 						};
@@ -162,6 +172,20 @@ app
 	res.writeHead(200, MIME_JSON);
 	res.write(JSON.stringify(result));
 	res.end();
+})
+
+.get('/machineInfo', (req, res) =>{
+	var data = req.query;
+	var sess = req.session;
+	if(sess.email){
+		res.render('machineInfo', {
+			email: sess.email,
+			ip: data.ip,
+			name: data.name
+		});
+	}else{
+		res.redirect('/login');
+	}
 })
 
 .get('/machine', (req, res) => {
@@ -450,6 +474,16 @@ app
 .get('/public/css/:file', (req, res) => {
 	var file = req.params.file;
 	var f = fs.createReadStream('public/css/' + file);
+	var contentType = 'text/plain';
+	if(file.endsWith('.css')) contentType = 'text/css';
+	if(file.endsWith('.js')) contentType = 'application/javascript';
+	res.writeHead(200, { 'Content-Type': contentType });
+	f.pipe(res);
+})
+
+.get('/public/video/:file', (req, res) => {
+	var file = req.params.file;
+	var f = fs.createReadStream('public/video/' + file);
 	var contentType = 'text/plain';
 	if(file.endsWith('.css')) contentType = 'text/css';
 	if(file.endsWith('.js')) contentType = 'application/javascript';
