@@ -6,7 +6,7 @@ env:
   global:
     - secure: "BaIQFobdnGVPcj+eqLqWdeuXnAgXGiP90lJ76ZAQKNehRq8dXXZaCUd+Mzl2mOGEVlaMNGDSZwq3PEjZICBMa1OtUXOEUV6KnS5nSAvpMLN6tSKNDCUkO49M5P8nmYIacYhluLfbMaQvl9vbsH3f+h+mx+PHx7A5lYEdlJX/Lsj6+lucUfP/yUA99O8KY/uQmwoOoifl2EVeF2fgFOrk7sMJhjAsMXS5A3631Mpudi9EpG8M6VCJZ6NNtX3qE5U7oh+ngftoirNrihsTSgDXyCxJ2fqavqcRoqswGmPamLT36g1eSr5FqMapUOaEzDunKyrw8mTthjrS+pqt0FHtvnQ+aAnJtfx+oMKvX4eDN4xTE5ll7Op8eB3B5TphU8oSIhqtqfLpI6S66GhzausuwOifJzmS0p0ZGatbCnm9tmGDk4tui9VtUK5MOeDrpWoY+A06WUApfEPybzUf0A9aXENsY6TY3/VWD8cne3GatmihEpFT7+jIdnwwTLj6Fy3As4zfHp9Hcfl+b/mdxrM6eHa5QMriEmEpnxsDvjLhT0qFD1iHITHvYPb/+5B3FsC5n46wjYuXKHb8w0yI5dx4gDxosAnoQZow6U6pzJIGkMtLIB0eYkFbc0FVyC5K2hIJXqkRVwqdxtWK0AkHwwanK1XE1CTMmWGCxR6Ptv2LqH8="
     - secure: "LaW2nqkqh4xeP8Kjw42bgsVa+SrqBbaXxArT2JBopc4tC80aa6JRB3fq8NVHruTqCPTjgE6YhWPVJCYvJ0pEBk9onSSGW76yBT2EsWHdZjEMFc+UAmpokJP5zFDw2dCfQtjN0xV/dtztfnkH1qUcLw+s6YXA5EihCq8kv8Bm+283abbG5YRiTZ4f17NKLkJEqi3eW9KLzuHElD9pQ2SMXTZ4Svk50W+AGj8COknihkqgXC7KC3568XZYsFPMVx6z6U7d0S4oqfaUdKc8XG7gFlwfmY+QSOy8xudGWR0Fq1kMNX/4/nslB7lbeocLwMeNad1O/MXHVX3nncAwLF8sSRuB35MVrV6kuUHPJY5LZjmy6BzBBP5UGdFsTiIo6f1n4rAnedx/RHU+sU6RJ+PUP2BKTGjHIeLuYHfGzZ1kZQn00WQ/Wtvr+4vH1ylnkB4JNZgKmvw9J7JliBTPa5oQV4ERpaG/F8TEoO0tyTsCcNqSz45SeFsiKSpue9E1xkYYXjxZKXtAUTJZglhJYZpr7yc0pgVl03uauerYOJgshijrVr3zFn4Yol5wqV+bHWA1SPJce8sndKB5Wx6JtYaajhyTZRg3nFZvT0nZSukBhi+tqhScPVxCHT70QsOTQIZ8MfVtlw9ASxteoWB21N+79vhYZmfR4kNcdqmfhz6ZUVs="
-    - DEPLOY_PATH=/var/html/node/icu
+    - DEPLOY_PATH=/var/www/node/icu
 addons:
     ssh_known_hosts:
       - vps.noob.tw
@@ -21,7 +21,7 @@ after_success:
   - test $TRAVIS_BRANCH = "master" && tar -czf package.tar.gz --exclude='.git' --exclude='./node_modules'
   - test $TRAVIS_BRANCH = "master" && export SSHPASS=$SERVER_PASS
   - test $TRAVIS_BRANCH = "master" && sshpass -e scp package.tar.gz Noob@$SERVER_HOST:$DEPLOY_PATH
-  - test $TRAVIS_BRANCH = "master" && sshpass -e ssh Noob@$SERVER_HOST "cd /var/www/html/node/icu; tar -xzf package.tar.gz; rm package.tar.gz; npm install; echo Fine. Deployed.;"
+  - test $TRAVIS_BRANCH = "master" && sshpass -e ssh Noob@$SERVER_HOST "cd /var/www/node/icu; tar -xzf package.tar.gz; rm package.tar.gz; npm install; echo Fine. Deployed.;"
 cache:
   apt: true
   directories:
