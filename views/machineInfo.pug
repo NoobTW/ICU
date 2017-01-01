@@ -9,7 +9,8 @@ html(lang='en')
 		link(rel='stylesheet', href='/public/css/all.css')
 		script(src='/public/js/jquery-3.1.1.min .js')
 		script(src='/public/js/bootstrap.min.js')
-		script(src='/public/js/d3.min.js')
+		//script(src='/public/js/d3.min.js')
+		script(src='http://mbostock.github.com/d3/d3.v2.js')
 		script(src='/public/js/all.js')
 	body
 		#loader
@@ -61,17 +62,31 @@ html(lang='en')
 										a(href='#') Charts
 									li(role='presentation')
 										a(href='#') Messages
-								.container-fluid#machineInfoContent
+								.container-fluid.page#machineInfoContent
 									ul.list-group
-										li.list-group-item#OS OS:  
-										li.list-group-item#upTime Uptime:
-										li.list-group-item#cpuUsage CPU Usage:  
-										li.list-group-item#cpuPlatform CPU Platform:  
-										li.list-group-item#cpuModel CPU Model:  
-										li.list-group-item#cpuCores CPU Cores: 
-										li.list-group-item#load Load:  
-										li.list-group-item#freemem Freemem:  
-										li.list-group-item#mac MAC:  
+										li.list-group-item.list-title OS:
+											span.list-body#OS
+										li.list-group-item.list-title UpTime:
+											span.list-body#upTime
+										li.list-group-item.list-title CPU Usage:
+											span.list-body#cpuUsage
+										li.list-group-item.list-title CPU Platform:
+											span.list-body#cpuPlatform
+										li.list-group-item.list-title CPU Model:
+											span.list-body#cpuModel
+										li.list-group-item.list-title CPU Cores:
+											span.list-body#cpuCores
+										li.list-group-item.list-title Load:
+											span.list-body#load
+										li.list-group-item.list-title Freemem:
+											span.list-body#freemem
+										li.list-group-item.list-title MAC:
+											span.list-body#mac
+								.container-fluid.page#machineGraphContent
+									h3 CPU Usage
+									div#graphCPU
+									h3 Freemem
+									div#graphFreemem
 
 .modal.fade#addMachineForm(tabindex='-1', role='dialog')
 	.modal-dialog(role='document')
@@ -95,9 +110,9 @@ html(lang='en')
 			.modal-header#alertHeader
 				button.close(type='button', data-dismiss='modal', aria-label='Close')
 					span(aria-hidden='true') ×
-				h4.modal-title 
+				h4.modal-title
 			.modal-body#alertMessage
-				p 
+				p
 			.modal-footer
 				a.btn.btn-default(href='/') Close
 .modal.fade#machineInfo(tabindex='-1', role='dialog')
@@ -106,8 +121,8 @@ html(lang='en')
 			.modal-header#machineInfoHeader
 				button.close(type='button', data-dismiss='modal', aria-label='Close')
 					span(aria-hidden='true') ×
-				h4.modal-title 
+				h4.modal-title
 			.modal-body#machineInfoMessage
-				p 
+				p
 			.modal-footer
 				button.btn.btn-default(type='button', data-dismiss='modal') Close

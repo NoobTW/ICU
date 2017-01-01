@@ -356,6 +356,16 @@ app
 	}
 })
 
+.get('/alarms', (req, res) => {
+	var sess = req.session;
+
+	if(sess.email){
+		res.render('alarms');
+	}else{
+		res.redirect('/login');
+	}
+})
+
 .get('/auth/facebook', (req, res) => {
 	var facebook_oauth_url = 'https://www.facebook.com/dialog/oauth?' +
 		'redirect_uri=http://localhost:10150/auth/facebook/callback'+

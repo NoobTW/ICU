@@ -194,3 +194,35 @@ nav h1 {
 		margin-top: 1rem;
 	}
 }
+
+path {
+    stroke: steelblue;
+    stroke-width: 2;
+    fill: none;
+}
+.axis {
+    shape-rendering: crispEdges;
+}
+.x.axis line {
+    stroke: lightgrey;
+}
+.x.axis .minor {
+    stroke-opacity: .5;
+}
+.x.axis path {
+    display: none;
+}
+.y.axis line,
+.y.axis path {
+    fill: none;
+    stroke: #000;
+}
+
+.list-title{
+	font-weight: 800;
+}
+
+.list-body{
+	padding-left: .5rem;
+	font-weight: 400;
+}

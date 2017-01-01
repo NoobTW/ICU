@@ -41,6 +41,19 @@ $(document).ready(function() {
 		return uptimeString;
 	}
 
+	function getFreemem(a){
+		if(a > 1073741824){
+			a = (a/1073741824).toFixed(1) + ' GB';
+		}else if(a > 1048576){
+			a = Math.floor(a/1048576) + ' MB';
+		}else if(a > 1024){
+			a = Math.floor(a/1024) + ' KB';
+		}else{
+			a = a + ' Bytes';
+		}
+		return a;
+	}
+
 	function appendMachineTable() {
 		$.ajax({
 			url: '/machines',
@@ -70,20 +83,11 @@ $(document).ready(function() {
 		appendMachineTable();
 	};
 
-	setInterval(function(){
+	var intervalBasicInfo = setInterval(function(){
 		if ($(location)[0].pathname === '/machineInfo') {
 			var urlSearch = $(location)[0].search;
 			var machineIP = urlSearch.split('&')[0].split('=')[1];
 			getManchineInfo(machineIP, function(response, machineInfo) {
-					$('#OS').text("OS:");
-					$('#upTime').text("UpTime:");
-					$('#cpuUsage').text("CPU Usage:");
-					$('#cpuPlatform').text("CPU Platform:");
-					$('#cpuModel').text("CPU Model:");
-					$('#cpuCores').text("CPU Cores:");
-					$('#load').text("Load:");
-					$('#freemem').text("Freemem:");
-					$('#mac').text("MAC:");
 					if (response !== 0) {
 						$('#alertHeader').text('Warning');
 						$('#alertMessage').find('p').text("Your Machine is Dead, ASshole");
@@ -91,20 +95,45 @@ $(document).ready(function() {
 						return false;
 					}
 					if (response === 0) {
-						$('#OS').append(machineInfo.os);
-						$('#upTime').append(getUptime(machineInfo.uptime));
-						$('#cpuUsage').append(machineInfo.cpu_usage + '%');
-						$('#cpuPlatform').append(machineInfo.cpu_platform);
-						$('#cpuModel').append(machineInfo.cpu_model);
-						$('#cpuCores').append(machineInfo.cpu_cores);
-						$('#load').append(machineInfo.load[0] + ', ' + machineInfo.load[1] + ', ' + machineInfo.load[2]);
-						$('#freemem').append(machineInfo.freemem);
-						$('#mac').append(machineInfo.mac);
+						$('#OS').text(machineInfo.os);
+						$('#upTime').text(getUptime(machineInfo.uptime));
+						$('#cpuUsage').text(machineInfo.cpu_usage + '%');
+						$('#cpuPlatform').text(machineInfo.cpu_platform);
+						$('#cpuModel').text(machineInfo.cpu_model);
+						$('#cpuCores').text(machineInfo.cpu_cores);
+						$('#load').text(machineInfo.load[0] + ', ' + machineInfo.load[1] + ', ' + machineInfo.load[2]);
+						$('#freemem').text(getFreemem(machineInfo.freemem));
+						$('#mac').text(machineInfo.mac);
 						return false;
 					}
 			});
 		}
 	},1000);
+
+	var intervalGraph = setInterval(function(){
+		getManchineInfo(machineIP, function(response, machineInfo){
+			count++;
+			render('graphCPU', machineInfo.cpu_usage, dataCPU, count, time, yAxisCPU);
+			render('graphFreemem', machineInfo.freemem, dataFreemem, count, time, yAxisFreemem);
+		});
+	}, 1000);
+
+	var time = Date.now() / 1000 | 0;
+
+	var urlSearch = $(location)[0].search;
+	var machineIP = urlSearch.split('&')[0].split('=')[1];
+	var dataCPU = [];
+	var dataFreemem = [];
+	var count = 0;
+	$('#machineGraphContent').hide();
+
+	var yAxisCPU = function(d){
+		return d+'%';
+	};
+
+	var yAxisFreemem = function(d){
+		return `${d/1024} KB`
+	};
 
 	$('#machineInfoNavBar').on('click', 'li', function(event) {
 		event.preventDefault();
@@ -112,75 +141,64 @@ $(document).ready(function() {
 		$(this).addClass('active');
 	});
 
-	// 你們看這裡就好，有問題密我
-	$('#machineInfoNavBar').on('click', '#machineChartButton', function() {
-		$('#machineInfoContent').empty();
-		$('#machineInfoContent').append("<div id='graph' class='aGraph'></div>");
-		$('#machineInfoContent').append("<style>path {stroke: steelblue;stroke-width: 2;fill: none;}.axis {shape-rendering: crispEdges;}.x.axis line {stroke: lightgrey;}.x.axis .minor {stroke-opacity: .5;}.x.axis path {display: none;}.y.axis line, .y.axis path {fill: none;stroke: #000;}</style>");
-
-		var urlSearch = $(location)[0].search;
-		var machineIP = urlSearch.split('&')[0].split('=')[1];
-		setInterval(function() {
-			getManchineInfo(machineIP, function(response, machineInfo){
-				console.log(machineInfo.cpu_usage);
-			});
-		}, 1000);
-		var data = [];
-		var count = 0;
-		function render(data){
-  			document.getElementById("graph").innerHTML = "";
-			var m = [80, 80, 80, 80]; // margins
-			var w = 1000 - m[1] - m[3]; // width
-			var h = 400 - m[0] - m[2]; // height
-
-
-			var x = d3.scale.linear().domain([0+count, data.length+count]).range([0, w]);
-			var y = d3.scale.linear().domain([0, 100]).range([h, 0]);
-			var line = d3.svg.line()
-				.x(function(d,i) {
-					return x(i+count);
-				})
-				.y(function(d) {
-					return y(d);
-				})
-
-				var graph = d3.select("#graph").append("svg:svg")
-				      .attr("width", w + m[1] + m[3])
-				      .attr("height", h + m[0] + m[2])
-				    .append("svg:g")
-				      .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
-
-				var xAxis = d3.svg.axis().scale(x).tickSize(-h).tickSubdivide(true);
-				graph.append("svg:g")
-				      .attr("class", "x axis")
-				      .attr("transform", "translate(0," + h + ")")
-				      .call(xAxis);
-
-
-				var yAxisLeft = d3.svg.axis().scale(y).ticks(4).orient("left");
-				graph.append("svg:g")
-				      .attr("class", "y axis")
-				      .attr("transform", "translate(-25,0)")
-				      .call(yAxisLeft);
-
-	  			graph.append("svg:path").attr("d", line(data));
-  			}
-
-  			function add(a){
-          if(data.length>30){
-  				data.shift();
-          }
-  				data.push(a);
-  				count++;
-  				render(data);
-  			}
-  			setInterval(function(){
-  			getManchineInfo(machineIP, function(response, machineInfo){
-				add(machineInfo.cpu_usage);
-			});
-  			}, 1000);
-
+	$('#machineInfoNavBar').on('click', '#machineBaicInfoButton', function() {
+		$('.page').hide();
+		$('#machineInfoContent').show();
 	});
+	$('#machineInfoNavBar').on('click', '#machineChartButton', function() {
+		console.log('IM GAY')
+		$('.page').hide();
+		$('#machineGraphContent').show();
+	});
+
+	function render(view, value, data, count, time, yAxisFormat){
+		if(data.length>30){
+			data.shift();
+		}
+		data.push(value);
+
+		document.getElementById(view).innerHTML = "";
+		var m = [80, 80, 80, 80]; // margins
+		var w = 1000 - m[1] - m[3]; // width
+		var h = 400 - m[0] - m[2]; // height
+
+		var max_data = 0;
+		for(var i=0;i<data.length;i++) if(data[i]>max_data) max_data = data[i];
+
+		var x = d3.scale.linear().domain([0+count, data.length+count]).range([0, w]);
+		var y = d3.scale.linear().domain([0, max_data || 1]).range([h, 0]);
+		var line = d3.svg.line()
+			.x(function(d,i) {
+				return x(i+count);
+			})
+			.y(function(d) {
+				return y(d);
+			})
+
+		var graph = d3.select("#" + view).append("svg:svg")
+			  .attr("width", w + m[1] + m[3])
+			  .attr("height", h + m[0] + m[2])
+			.append("svg:g")
+			  .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
+
+		var xAxis = d3.svg.axis().scale(x).tickSize(-h).tickSubdivide(true).tickFormat(function(d){
+			var now = new Date((time + d)*1000).toTimeString().split(' ')[0].split(':');
+			return `${now[1]}m${now[2]}s`
+		});
+
+		graph.append("svg:g")
+			  .attr("class", "x axis")
+			  .attr("transform", "translate(0," + h + ")")
+			  .call(xAxis);
+
+		var yAxisLeft = d3.svg.axis().scale(y).ticks(4).orient("left").tickFormat(yAxisFormat)
+		graph.append("svg:g")
+			  .attr("class", "y axis")
+			  .attr("transform", "translate(-25,0)")
+			  .call(yAxisLeft);
+
+		graph.append("svg:path").attr("d", line(data));
+	}
 
 	// $('#machinesTable').on('click', '#displayMachineInfo', function(event) {
 	// 	event.preventDefault();
@@ -215,32 +233,32 @@ $(document).ready(function() {
 
 		var data = JSON.stringify({email: email, password: sha256(password)});
 		$.ajax({
-	        url: '/login',
-	        type: 'POST',
-	        data: data,
-	        contentType: 'application/json; charset=utf-8',
-	        dataType: "json",
-	        complete: function(jqXHR, textStatus) {
-	        	var response = $.parseJSON(jqXHR.responseText).result;
-	        	if (response === -1) {
-	        		$('#alertHeader').text('Error');
+			url: '/login',
+			type: 'POST',
+			data: data,
+			contentType: 'application/json; charset=utf-8',
+			dataType: "json",
+			complete: function(jqXHR, textStatus) {
+				var response = $.parseJSON(jqXHR.responseText).result;
+				if (response === -1) {
+					$('#alertHeader').text('Error');
 					$('#alertMessage').find('p').text("Email or password is incorrect");
 					$('#alert').modal('show');
 					return false;
-	        	}
+				}
 
-	        	if (response === -999) {
-	        		$('#alertHeader').text('Error');
+				if (response === -999) {
+					$('#alertHeader').text('Error');
 					$('#alertMessage').find('p').text("Database Error");
 					$('#alert').modal('show');
 					return false;
-	        	}
+				}
 
-	        	if(response === 0) {
-	        		$(location).attr('href', '/');
-	        	}
-	        }
-    	});
+				if(response === 0) {
+					$(location).attr('href', '/');
+				}
+			}
+		});
 
 	});
 
@@ -290,39 +308,39 @@ $(document).ready(function() {
 		var data = JSON.stringify({email: email, password: sha256(password)})
 
 		$.ajax({
-	        url: '/register',
-	        type: 'POST',
-	        data: data,
-	        contentType: 'application/json; charset=utf-8',
-	        dataType: "json",
-	        complete: function(jqXHR, textStatus) {
-	        	var response = $.parseJSON(jqXHR.responseText).result;
-	        	if (response === -1) {
-	        		$('#alertHeader').text('Error');
+			url: '/register',
+			type: 'POST',
+			data: data,
+			contentType: 'application/json; charset=utf-8',
+			dataType: "json",
+			complete: function(jqXHR, textStatus) {
+				var response = $.parseJSON(jqXHR.responseText).result;
+				if (response === -1) {
+					$('#alertHeader').text('Error');
 					$('#alertMessage').find('p').text("Your information type is incorrect");
 					$('#alert').modal('show');
 					return false;
-	        	}
+				}
 
-	        	if (response === -2) {
-	        		$('#alertHeader').text('Error');
+				if (response === -2) {
+					$('#alertHeader').text('Error');
 					$('#alertMessage').find('p').text("This is Email have been registered");
 					$('#alert').modal('show');
 					return false;
-	        	}
+				}
 
-	        	if (response === -999) {
-	        		$('#alertHeader').text('Error');
+				if (response === -999) {
+					$('#alertHeader').text('Error');
 					$('#alertMessage').find('p').text("Database Error");
 					$('#alert').modal('show');
 					return false;
-	        	}
+				}
 
-	        	if(response === 0) {
-        			$(location).attr('href', '/login');
-	        	}
-	        }
-    	});
+				if(response === 0) {
+					$(location).attr('href', '/login');
+				}
+			}
+		});
 	});
 
 	$('#openAddMachineButton').on('click', function() {
@@ -334,58 +352,58 @@ $(document).ready(function() {
 		var machineName = $('input[name=machine-name]').val();
 		var data = JSON.stringify({ip: machineIp, name: machineName});
 		$.ajax({
-	        url: '/machine',
-	        type: 'POST',
-	        data: data,
-	        contentType: 'application/json; charset=utf-8',
-	        dataType: "json",
-	        complete: function(jqXHR, textStatus) {
-	        	var response = $.parseJSON(jqXHR.responseText).result;
-	        	if (response === -1) {
-	        		$('#alertHeader').text('Error');
+			url: '/machine',
+			type: 'POST',
+			data: data,
+			contentType: 'application/json; charset=utf-8',
+			dataType: "json",
+			complete: function(jqXHR, textStatus) {
+				var response = $.parseJSON(jqXHR.responseText).result;
+				if (response === -1) {
+					$('#alertHeader').text('Error');
 					$('#alertMessage').find('p').text("Your IP type is incorrect");
 					$('#alert').modal('show');
 					return false;
-	        	}
+				}
 
-	        	if (response === -2) {
-	        		$('#alertHeader').text('Error');
+				if (response === -2) {
+					$('#alertHeader').text('Error');
 					$('#alertMessage').find('p').text("This machine is existed");
 					$('#alert').modal('show');
 					return false;
-	        	}
+				}
 
-	        	if (response === -3) {
-	        		$('#alertHeader').text('Error');
+				if (response === -3) {
+					$('#alertHeader').text('Error');
 					$('#alertMessage').find('p').text("This machine doesn't response");
 					$('#alert').modal('show');
 					return false;
-	        	}
+				}
 
-	        	if (response === -998) {
-	        		$('#alertHeader').text('Error');
+				if (response === -998) {
+					$('#alertHeader').text('Error');
 					$('#alertMessage').find('p').text("User isn't login");
 					$('#alert').modal('show');
 					return false;
-	        	}
+				}
 
-	        	if (response === -999) {
-	        		$('#alertHeader').text('Error');
+				if (response === -999) {
+					$('#alertHeader').text('Error');
 					$('#alertMessage').find('p').text("Database Error");
 					$('#alert').modal('show');
 					return false;
-	        	}
+				}
 
-	        	if (response === 0) {
-	        		$('#alertHeader').text('Success');
+				if (response === 0) {
+					$('#alertHeader').text('Success');
 					$('#alertMessage').find('p').text("Machine Added!");
 					$('#alert').modal('show');
 					$('#machinesTable > tbody').empty();
 					appendMachineTable();
 					return false;
-	        	}
-	        }
-        });
+				}
+			}
+		});
 	});
 
 });
