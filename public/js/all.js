@@ -83,136 +83,139 @@ $(document).ready(function() {
 		appendMachineTable();
 	};
 
-	var intervalBasicInfo = setInterval(function(){
-		if ($(location)[0].pathname === '/machineInfo') {
-			var urlSearch = $(location)[0].search;
-			var machineIP = urlSearch.split('&')[0].split('=')[1];
-			getManchineInfo(machineIP, function(response, machineInfo) {
-					if (response !== 0) {
-						$('#alertHeader').text('Warning');
-						$('#alertMessage').find('p').text("Your Machine is Dead, ASshole");
-						$('#alert').modal('show');
-						return false;
-					}
-					if (response === 0) {
-						$('#OS').text(machineInfo.os);
-						$('#upTime').text(getUptime(machineInfo.uptime));
-						$('#cpuUsage').text(machineInfo.cpu_usage + '%');
-						$('#cpuPlatform').text(machineInfo.cpu_platform);
-						$('#cpuModel').text(machineInfo.cpu_model);
-						$('#cpuCores').text(machineInfo.cpu_cores);
-						$('#load').text(machineInfo.load[0] + ', ' + machineInfo.load[1] + ', ' + machineInfo.load[2]);
-						$('#freemem').text(getFreemem(machineInfo.freemem));
-						$('#mac').text(machineInfo.mac);
-						return false;
-					}
+	if ($(location)[0].pathname === '/machineInfo') {
+
+		var intervalBasicInfo = setInterval(function(){
+			if ($(location)[0].pathname === '/machineInfo') {
+				var urlSearch = $(location)[0].search;
+				var machineIP = urlSearch.split('&')[0].split('=')[1];
+				getManchineInfo(machineIP, function(response, machineInfo) {
+						if (response !== 0) {
+							$('#alertHeader').text('Warning');
+							$('#alertMessage').find('p').text("Your Machine is Dead, ASshole");
+							$('#alert').modal('show');
+							return false;
+						}
+						if (response === 0) {
+							$('#OS').text(machineInfo.os);
+							$('#upTime').text(getUptime(machineInfo.uptime));
+							$('#cpuUsage').text(machineInfo.cpu_usage + '%');
+							$('#cpuPlatform').text(machineInfo.cpu_platform);
+							$('#cpuModel').text(machineInfo.cpu_model);
+							$('#cpuCores').text(machineInfo.cpu_cores);
+							$('#load').text(machineInfo.load[0] + ', ' + machineInfo.load[1] + ', ' + machineInfo.load[2]);
+							$('#freemem').text(getFreemem(machineInfo.freemem));
+							$('#mac').text(machineInfo.mac);
+							return false;
+						}
+				});
+			}
+		},1000);
+
+		var intervalGraph = setInterval(function(){
+			getManchineInfo(machineIP, function(response, machineInfo){
+				count++;
+				render('graphCPU', machineInfo.cpu_usage, dataCPU, count, time, yAxisCPU);
+				render('graphFreemem', machineInfo.freemem/1024, dataFreemem, count, time, yAxisFreemem);
 			});
-		}
-	},1000);
+		}, 1000);
 
-	var intervalGraph = setInterval(function(){
-		getManchineInfo(machineIP, function(response, machineInfo){
-			count++;
-			render('graphCPU', machineInfo.cpu_usage, dataCPU, count, time, yAxisCPU);
-			render('graphFreemem', machineInfo.freemem/1024, dataFreemem, count, time, yAxisFreemem);
-		});
-	}, 1000);
+		var time = Date.now() / 1000 | 0;
 
-	var time = Date.now() / 1000 | 0;
+		var urlSearch = $(location)[0].search;
+		var machineIP = urlSearch.split('&')[0].split('=')[1];
+		var dataCPU = [];
+		var dataFreemem = [];
+		var count = 0;
+		$('#machineGraphContent').hide();
 
-	var urlSearch = $(location)[0].search;
-	var machineIP = urlSearch.split('&')[0].split('=')[1];
-	var dataCPU = [];
-	var dataFreemem = [];
-	var count = 0;
-	$('#machineGraphContent').hide();
+		var yAxisCPU = function(d){
+			console.log('CPU:' + d);
+			return d+'%';
+		};
 
-	var yAxisCPU = function(d){
-		console.log('CPU:' + d);
-		return d+'%';
-	};
+		var yAxisFreemem = function(d){
+			console.log('MEM:' + d);
+			return `${d/1000} MB`
+		};
 
-	var yAxisFreemem = function(d){
-		console.log('MEM:' + d);
-		return `${d/1000} MB`
-	};
-
-	$('#machineInfoNavBar').on('click', 'li', function(event) {
-		event.preventDefault();
-		$('#machineInfoNavBar').find('.active').removeClass('active');
-		$(this).addClass('active');
-	});
-
-	$('#machineInfoNavBar').on('click', '#machineBaicInfoButton', function() {
-		$('.page').hide();
-		$('#machineInfoContent').show();
-	});
-	$('#machineInfoNavBar').on('click', '#machineChartButton', function() {
-		console.log('IM GAY')
-		$('.page').hide();
-		$('#machineGraphContent').show();
-	});
-
-	function render(view, value, data, count, time, yAxisFormat){
-		if(data.length>30){
-			data.shift();
-		}
-		data.push(value);
-
-		document.getElementById(view).innerHTML = "";
-		var m = [80, 80, 80, 80]; // margins
-		var w = 1000 - m[1] - m[3]; // width
-		var h = 400 - m[0] - m[2]; // height
-
-		var max_data = 0;
-		for(var i=0;i<data.length;i++) if(data[i]>max_data) max_data = data[i];
-
-		var x = d3.scale.linear().domain([0+count, data.length+count]).range([0, w]);
-		var y = d3.scale.linear().domain([0, max_data || 1]).range([h, 0]);
-		var line = d3.svg.line()
-			.x(function(d,i) {
-				return x(i+count);
-			})
-			.y(function(d) {
-				return y(d);
-			})
-
-		var graph = d3.select("#" + view).append("svg:svg")
-			  .attr("width", w + m[1] + m[3])
-			  .attr("height", h + m[0] + m[2])
-			.append("svg:g")
-			  .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
-
-		var xAxis = d3.svg.axis().scale(x).tickSize(-h).tickSubdivide(true).tickFormat(function(d){
-			var now = new Date((time + d)*1000).toTimeString().split(' ')[0].split(':');
-			return `${now[1]}m${now[2]}s`
+		$('#machineInfoNavBar').on('click', 'li', function(event) {
+			event.preventDefault();
+			$('#machineInfoNavBar').find('.active').removeClass('active');
+			$(this).addClass('active');
 		});
 
-		graph.append("svg:g")
-			  .attr("class", "x axis")
-			  .attr("transform", "translate(0," + h + ")")
-			  .call(xAxis);
+		$('#machineInfoNavBar').on('click', '#machineBaicInfoButton', function() {
+			$('.page').hide();
+			$('#machineInfoContent').show();
+		});
+		$('#machineInfoNavBar').on('click', '#machineChartButton', function() {
+			console.log('IM GAY')
+			$('.page').hide();
+			$('#machineGraphContent').show();
+		});
 
-		var yAxisLeft = d3.svg.axis().scale(y).ticks(4).orient("left").tickFormat(yAxisFormat)
-		graph.append("svg:g")
-			  .attr("class", "y axis")
-			  .attr("transform", "translate(-25,0)")
-			  .call(yAxisLeft);
+		function render(view, value, data, count, time, yAxisFormat){
+			if(data.length>30){
+				data.shift();
+			}
+			data.push(value);
 
-		graph.append("svg:path").attr("d", line(data));
+			document.getElementById(view).innerHTML = "";
+			var m = [80, 80, 80, 80]; // margins
+			var w = 1000 - m[1] - m[3]; // width
+			var h = 400 - m[0] - m[2]; // height
+
+			var max_data = 0;
+			for(var i=0;i<data.length;i++) if(data[i]>max_data) max_data = data[i];
+
+			var x = d3.scale.linear().domain([0+count, data.length+count]).range([0, w]);
+			var y = d3.scale.linear().domain([0, max_data || 1]).range([h, 0]);
+			var line = d3.svg.line()
+				.x(function(d,i) {
+					return x(i+count);
+				})
+				.y(function(d) {
+					return y(d);
+				})
+
+			var graph = d3.select("#" + view).append("svg:svg")
+				  .attr("width", w + m[1] + m[3])
+				  .attr("height", h + m[0] + m[2])
+				.append("svg:g")
+				  .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
+
+			var xAxis = d3.svg.axis().scale(x).tickSize(-h).tickSubdivide(true).tickFormat(function(d){
+				var now = new Date((time + d)*1000).toTimeString().split(' ')[0].split(':');
+				return `${now[1]}m${now[2]}s`
+			});
+
+			graph.append("svg:g")
+				  .attr("class", "x axis")
+				  .attr("transform", "translate(0," + h + ")")
+				  .call(xAxis);
+
+			var yAxisLeft = d3.svg.axis().scale(y).ticks(4).orient("left").tickFormat(yAxisFormat)
+			graph.append("svg:g")
+				  .attr("class", "y axis")
+				  .attr("transform", "translate(-25,0)")
+				  .call(yAxisLeft);
+
+			graph.append("svg:path").attr("d", line(data));
+		}
+
+		// $('#machinesTable').on('click', '#displayMachineInfo', function(event) {
+		// 	event.preventDefault();
+		// 	var ip = $(this).data('ip');
+		// 	getManchineInfo(ip, function(response, machineInfo) {
+		// 		// machineInfo = $.parseJSON(machineInfo);
+		// 		$('#machineInfoHeader').text("Machine Information");
+		// 		$('#machineInfoMessage').find('p').text(machineInfo);
+		// 		$('#machineInfo').modal('show');
+		// 		return false;
+		// 	});
+		// });
 	}
-
-	// $('#machinesTable').on('click', '#displayMachineInfo', function(event) {
-	// 	event.preventDefault();
-	// 	var ip = $(this).data('ip');
-	// 	getManchineInfo(ip, function(response, machineInfo) {
-	// 		// machineInfo = $.parseJSON(machineInfo);
-	// 		$('#machineInfoHeader').text("Machine Information");
-	// 		$('#machineInfoMessage').find('p').text(machineInfo);
-	// 		$('#machineInfo').modal('show');
-	// 		return false;
-	// 	});
-	// });
 
 	$('#loginButton').on('click', function(event) {
 		event.preventDefault();

@@ -22,9 +22,9 @@ html
             .panel-body
               form(action='/login' method='post')
                 .form-group
-                  input.form-control(name='email', type='email', placeholder='Email', required='required')
+                  input.form-control(name='email', type='email', placeholder='Email', required='required')#loginEmail
                 .form-group
-                  input.form-control(name='password', type='password', placeholder='Password', required='required')
+                  input.form-control(name='password', type='password', placeholder='Password', required='required')#loginPassword
                 button.btn.btn-success.btn-lg.btn-block#loginButton(type='button') Login
                 a.btn.btn-primary.btn-lg.btn-block(href='/register') Register
                 a.btn.btn-facebookLogin.fa.fa-facebook-official.fa-2x.btn-lg.btn-block(href='/auth/facebook')

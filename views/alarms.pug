@@ -56,15 +56,23 @@ html(lang='en')
 								div.panel.panel-default
 									div.panel-heading Recent Events/Alarms
 									ul.list-group
-										li.list-group-item
-											span.date 15:24:52
-											span.body ERR: USER TOO GAY
-										li.list-group-item
-											span.date 15:24:50
-											span.body INFO: Eunice ate a candy
-										li.list-group-item
-											span.date 15:23:22
-											span.body WARN: somrthing has been stolen
+										- if(log.length == 0){
+											li.list-group-item= 'No events/alarms now.'
+										- } else {
+											- for (var i=0;i<log.length;i++){
+												li.list-group-item= log[i].body
+											- }
+										- }
+
+										//- li.list-group-item
+										//- 	span.date 15:24:52
+										//- 	span.body ERR: USER TOO GAY
+										//- li.list-group-item
+										//- 	span.date 15:24:50
+										//- 	span.body INFO: Eunice ate a candy
+										//- li.list-group-item
+										//- 	span.date 15:23:22
+										//- 	span.body WARN: somrthing has been stolen
 
 .modal.fade#addMachineForm(tabindex='-1', role='dialog')
 	.modal-dialog(role='document')

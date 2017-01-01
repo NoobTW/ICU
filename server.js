@@ -370,17 +370,61 @@ app
 
 .get('/alarms', (req, res) => {
 	var sess = req.session;
-
 	if(sess.email){
-		res.render('alarms');
+		mc.connect(HOST_MONGO, (err, db) => {
+			var collection = db.collection('log');
+			collection.find({$query: {owner: sess.email}, $orderby: {time: -1}}).toArray((err, docs) => {
+				if(!err && docs.length){
+					res.render('alarms', {
+						log: docs
+					});
+				}else if(!err){
+					res.render('alarms', {
+						log: []
+					});
+				}else{
+					res.render('alarms', {
+						log: 'Something like database error, maybe the author is NOT SONG.'
+					});
+				}
+			});
+		});
 	}else{
 		res.redirect('/login');
 	}
 })
 
 .post('/message', (req, res) => {
-	var data = req.body;
-	console.log(data.body);
+	let data = req.body;
+	let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+	if(data.type && data.body){
+		mc.connect(HOST_MONGO, (err, db) => {
+			var collection = db.collection('log');
+			collection.find({ip: ip}).toArray((err, docs) => {
+				if(!err && docs.length){
+					var owner = docs[0].owner;
+					var new_log = {
+						owner: owner,
+						ip: ip,
+						type: data.type,
+						body: data.body,
+						time: new Date()
+					};
+					collection.insert(new_log, (err, res) => {
+						if(!err){
+							res.writeHead(200, {'Content-Type': MIME_JSON});
+							res.write('{result: 0}');
+							res.end();
+						}else{
+							res.writeHead(200, {'Content-Type': MIME_JSON});
+							res.write('{result: "GG"}');
+							res.end();
+						}
+					});
+				}
+			});
+		});
+	}
 	res.end();
 })
 
