@@ -444,50 +444,88 @@ app
 
 .get('/public/js/:file', (req, res) => {
 	var file = req.params.file;
-	var f = fs.createReadStream('public/js/' + file);
-	var contentType = 'text/plain';
-	if(file.endsWith('.css')) contentType = 'text/css';
-	if(file.endsWith('.js')) contentType = 'application/javascript';
-	res.writeHead(200, { 'Content-Type': contentType });
-	f.pipe(res);
+	fs.stat('public/js/' + file, (err) => {
+		if(!err){
+			var f = fs.createReadStream('public/js/' + file);
+			var contentType = 'text/plain';
+			if(file.endsWith('.css')) contentType = 'text/css';
+			if(file.endsWith('.js')) contentType = 'application/javascript';
+			res.writeHead(200, { 'Content-Type': contentType });
+			f.pipe(res);
+		}else{
+			res.writeHead(404, {'Content-Type': 'application/json'});
+			res.end();
+		}
+	});
 })
 
 .get('/public/fonts/:file', (req, res) => {
 	var file = req.params.file;
-	var f = fs.createReadStream('public/fonts/' + file);
-	var contentType = 'text/plain';
-	if(file.endsWith('.css')) contentType = 'text/css';
-	if(file.endsWith('.js')) contentType = 'application/javascript';
-	res.writeHead(200, { 'Content-Type': contentType });
-	f.pipe(res);
+	fs.stat('public/fonts/' + file, (err) => {
+		if(!err){
+			var f = fs.createReadStream('public/fonts/' + file);
+			var contentType = 'text/plain';
+			if(file.endsWith('.css')) contentType = 'text/css';
+			if(file.endsWith('.js')) contentType = 'application/javascript';
+			res.writeHead(200, { 'Content-Type': contentType });
+			f.pipe(res);
+		}else{
+			res.writeHead(404, {'Content-Type': 'application/json'});
+			res.end();
+		}
+	});
 })
 
 .get('/public/img/:file', (req, res) => {
 	var file = req.params.file;
-	var f = fs.createReadStream('public/img/' + file);
-	var contentType = 'text/plain';
-	if(file.endsWith('.css')) contentType = 'text/css';
-	if(file.endsWith('.js')) contentType = 'application/javascript';
-	res.writeHead(200, { 'Content-Type': contentType });
-	f.pipe(res);
+	var file = req.params.file;
+	fs.stat('public/img/' + file, (err) => {
+		if(!err){
+			var f = fs.createReadStream('public/img/' + file);
+			var contentType = 'text/plain';
+			if(file.endsWith('.css')) contentType = 'text/css';
+			if(file.endsWith('.js')) contentType = 'application/javascript';
+			res.writeHead(200, { 'Content-Type': contentType });
+			f.pipe(res);
+		}else{
+			res.writeHead(404, {'Content-Type': 'application/json'});
+			res.end();
+		}
+	});
 })
 
 .get('/public/css/:file', (req, res) => {
 	var file = req.params.file;
-	var f = fs.createReadStream('public/css/' + file);
-	var contentType = 'text/plain';
-	if(file.endsWith('.css')) contentType = 'text/css';
-	if(file.endsWith('.js')) contentType = 'application/javascript';
-	res.writeHead(200, { 'Content-Type': contentType });
-	f.pipe(res);
+	var file = req.params.file;
+	fs.stat('public/css/' + file, (err) => {
+		if(!err){
+			var f = fs.createReadStream('public/css/' + file);
+			var contentType = 'text/plain';
+			if(file.endsWith('.css')) contentType = 'text/css';
+			if(file.endsWith('.js')) contentType = 'application/javascript';
+			res.writeHead(200, { 'Content-Type': contentType });
+			f.pipe(res);
+		}else{
+			res.writeHead(404, {'Content-Type': 'application/json'});
+			res.end();
+		}
+	});
 })
 
 .get('/public/video/:file', (req, res) => {
 	var file = req.params.file;
-	var f = fs.createReadStream('public/video/' + file);
-	var contentType = 'text/plain';
-	if(file.endsWith('.css')) contentType = 'text/css';
-	if(file.endsWith('.js')) contentType = 'application/javascript';
-	res.writeHead(200, { 'Content-Type': contentType });
-	f.pipe(res);
+	var file = req.params.file;
+	fs.stat('public/video/' + file, (err) => {
+		if(!err){
+			var f = fs.createReadStream('public/video/' + file);
+			var contentType = 'text/plain';
+			if(file.endsWith('.css')) contentType = 'text/css';
+			if(file.endsWith('.js')) contentType = 'application/javascript';
+			res.writeHead(200, { 'Content-Type': contentType });
+			f.pipe(res);
+		}else{
+			res.writeHead(404, {'Content-Type': 'application/json'});
+			res.end();
+		}
+	});
 });

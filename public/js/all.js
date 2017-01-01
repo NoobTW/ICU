@@ -56,8 +56,8 @@ $(document).ready(function() {
 							"<td class='text-center'>" + "<a href='" + machineInfoURL + "' class='btn btn-info'>"+"<i class='fa fa-eye'></i>" + "</a>" + "</td>" +
 							"<td class='text-center'>" + machines[i].name + "</td>" +
 							"<td>" + machines[i].ip + "</td>" +
-							"<td>" + "<button type='button' data-ip='" + machines[i].ip + "' class='btn btn-primary'>修改</button>" + "</td>" +  
-							"<td>" + "<button type='button' data-ip='" + machines[i].ip + "' class='btn btn-danger'>刪除</button>" + "</td>" + 
+							"<td>" + "<button type='button' data-ip='" + machines[i].ip + "' class='btn btn-primary'>修改</button>" + "</td>" +
+							"<td>" + "<button type='button' data-ip='" + machines[i].ip + "' class='btn btn-danger'>刪除</button>" + "</td>" +
 						"</tr>"
 						);
 					}
@@ -65,11 +65,11 @@ $(document).ready(function() {
 			}
 		});
 	}
-	
+
 	if ($(location)[0].pathname === '/') {
 		appendMachineTable();
 	};
-	
+
 	setInterval(function(){
 		if ($(location)[0].pathname === '/machineInfo') {
 			var urlSearch = $(location)[0].search;
@@ -115,7 +115,7 @@ $(document).ready(function() {
 	// 你們看這裡就好，有問題密我
 	$('#machineInfoNavBar').on('click', '#machineChartButton', function() {
 		$('#machineInfoContent').empty();
-		$('#machineInfoContent').append("<script src='//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js'></script><div id='graph' class='aGraph'></div>");
+		$('#machineInfoContent').append("<div id='graph' class='aGraph'></div>");
 		$('#machineInfoContent').append("<style>path {stroke: steelblue;stroke-width: 2;fill: none;}.axis {shape-rendering: crispEdges;}.x.axis line {stroke: lightgrey;}.x.axis .minor {stroke-opacity: .5;}.x.axis path {display: none;}.y.axis line, .y.axis path {fill: none;stroke: #000;}</style>");
 
 		var urlSearch = $(location)[0].search;
@@ -177,11 +177,11 @@ $(document).ready(function() {
   			setInterval(function(){
   			getManchineInfo(machineIP, function(response, machineInfo){
 				add(machineInfo.cpu_usage);
-			});	
+			});
   			}, 1000);
-		
+
 	});
-		
+
 	// $('#machinesTable').on('click', '#displayMachineInfo', function(event) {
 	// 	event.preventDefault();
 	// 	var ip = $(this).data('ip');
@@ -198,7 +198,7 @@ $(document).ready(function() {
 		event.preventDefault();
 		var email = $('input[name=email]').val();
 		var password = $('input[name=password]').val();
-		
+
 		if (email == '' || password == '') {
 			$('#alertHeader').text('Warning');
 			$('#alertMessage').find('p').text("Email and password can't be empty");
@@ -215,7 +215,7 @@ $(document).ready(function() {
 
 		var data = JSON.stringify({email: email, password: sha256(password)});
 		$.ajax({
-	        url: '/login', 
+	        url: '/login',
 	        type: 'POST',
 	        data: data,
 	        contentType: 'application/json; charset=utf-8',
@@ -265,7 +265,7 @@ $(document).ready(function() {
 		var email = $('input[name=email]').val();
 		var password = $('input[name=password]').val();
 		var passwordCheck = $('input[name=passwordCheck]').val();
-		
+
 		if (email == '' || password == '' || passwordCheck=='') {
 			$('#alertHeader').text('Warning');
 			$('#alertMessage').find('p').text("Email and password can't be empty");
@@ -290,7 +290,7 @@ $(document).ready(function() {
 		var data = JSON.stringify({email: email, password: sha256(password)})
 
 		$.ajax({
-	        url: '/register', 
+	        url: '/register',
 	        type: 'POST',
 	        data: data,
 	        contentType: 'application/json; charset=utf-8',
@@ -334,7 +334,7 @@ $(document).ready(function() {
 		var machineName = $('input[name=machine-name]').val();
 		var data = JSON.stringify({ip: machineIp, name: machineName});
 		$.ajax({
-	        url: '/machine', 
+	        url: '/machine',
 	        type: 'POST',
 	        data: data,
 	        contentType: 'application/json; charset=utf-8',
