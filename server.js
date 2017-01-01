@@ -6,8 +6,6 @@ var request = require('request');
 var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var config = require('./config');
-var sha256 = require('js-sha256');
-var url = require('url');
 
 var mongo = require('mongodb');
 var mc = mongo.MongoClient;
@@ -369,6 +367,7 @@ app
 .post('/message', (req, res) => {
 	var data = req.body;
 	console.log(data.body);
+	res.end();
 })
 
 .get('/auth/facebook', (req, res) => {
@@ -493,7 +492,6 @@ app
 
 .get('/public/img/:file', (req, res) => {
 	var file = req.params.file;
-	var file = req.params.file;
 	fs.stat('public/img/' + file, (err) => {
 		if(!err){
 			var f = fs.createReadStream('public/img/' + file);
@@ -511,7 +509,6 @@ app
 
 .get('/public/css/:file', (req, res) => {
 	var file = req.params.file;
-	var file = req.params.file;
 	fs.stat('public/css/' + file, (err) => {
 		if(!err){
 			var f = fs.createReadStream('public/css/' + file);
@@ -528,7 +525,6 @@ app
 })
 
 .get('/public/video/:file', (req, res) => {
-	var file = req.params.file;
 	var file = req.params.file;
 	fs.stat('public/video/' + file, (err) => {
 		if(!err){
