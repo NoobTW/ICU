@@ -396,12 +396,11 @@ app
 
 .post('/message', (req, res) => {
 	let data = req.body;
-	let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+	let ip = req.headers['x-forwarded-for'].split(',')[0] || req.connection.remoteAddress;
 	if(data.type && data.body){
 		mc.connect(HOST_MONGO, (err, db) => {
 			var collection = db.collection('machine');
 			collection.find({ip: ip}).toArray((err, docs) => {
-				console.log(docs.length);
 				if(!err && docs.length){
 					console.log('test');
 					var owner = docs[0].owner;
@@ -428,7 +427,6 @@ app
 			});
 		});
 	}
-	res.end();
 })
 
 .get('/auth/facebook', (req, res) => {
