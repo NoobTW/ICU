@@ -114,7 +114,7 @@ $(document).ready(function() {
 		getManchineInfo(machineIP, function(response, machineInfo){
 			count++;
 			render('graphCPU', machineInfo.cpu_usage, dataCPU, count, time, yAxisCPU);
-			render('graphFreemem', machineInfo.freemem, dataFreemem, count, time, yAxisFreemem);
+			render('graphFreemem', machineInfo.freemem/1024, dataFreemem, count, time, yAxisFreemem);
 		});
 	}, 1000);
 
@@ -128,11 +128,13 @@ $(document).ready(function() {
 	$('#machineGraphContent').hide();
 
 	var yAxisCPU = function(d){
+		console.log('CPU:' + d);
 		return d+'%';
 	};
 
 	var yAxisFreemem = function(d){
-		return `${d/1024} KB`
+		console.log('MEM:' + d);
+		return `${d/1000} MB`
 	};
 
 	$('#machineInfoNavBar').on('click', 'li', function(event) {

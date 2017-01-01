@@ -366,6 +366,11 @@ app
 	}
 })
 
+.post('/message', (req, res) => {
+	var data = req.body;
+	console.log(data.body);
+})
+
 .get('/auth/facebook', (req, res) => {
 	var facebook_oauth_url = 'https://www.facebook.com/dialog/oauth?' +
 		'redirect_uri=http://localhost:10150/auth/facebook/callback'+

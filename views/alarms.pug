@@ -1,0 +1,106 @@
+doctype html
+html(lang='en')
+	head
+		meta(charset='UTF-8')
+		meta(name='viewport', content='width=device-width, initial-scale=1.0')
+		title Dashboard
+		link(rel='stylesheet', href='/public/css/font-awesome.min.css')
+		link(rel='stylesheet', href='/public/css/bootstrap.min.css')
+		link(rel='stylesheet', href='/public/css/all.css')
+		script(src='/public/js/jquery-3.1.1.min .js')
+		script(src='/public/js/all.js')
+		script(src='/public/js/bootstrap.min.js')
+	body
+		#loader
+		.fill-screen.content
+			nav.navbar.navbar-inverse
+				.container-fluid
+					.navbar-header
+						a.navbar-brand(href='#')
+							| ICU
+							h1 ICU
+					.collapse.navbar-collapse
+						ul.nav.navbar-nav.navbar-right
+							li.dropdown
+								a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
+									i.fa.fa-user
+									|  #{email}
+								ul.dropdown-menu
+									li
+										a(href='#')#logoutLink
+											i.fa.fa-sign-out
+											|  Logout
+									li
+										a(href='#')
+											i.fa.fa-user
+											|  User Information
+			.fill-screen.ICU-body
+				.ICU-side-nav.container-relative.pull-left
+					ul.nav.nav-pills.nav-stacked
+						li.nav-link.overview
+							a(href='/') Main View
+						li
+							a(href='/') My Machines
+						li
+							a(href='/Alarms') Event/Alarms
+				.ICU-content.container-relative.container-fluid
+					.ICU-widget.col-sm-12.ICU-widget-full-page
+						.ICU-widget-header
+							.row
+								.col-sm-4
+									h4
+										i.fa.fa-bell.fa-fw
+										|  Alarms
+						.ICU-widget-container.gateway-list
+							.ICU-widget-wrapper
+								div.panel.panel-default
+									div.panel-heading Recent Events/Alarms
+									ul.list-group
+										li.list-group-item
+											span.date 15:24:52
+											span.body ERR: USER TOO GAY
+										li.list-group-item
+											span.date 15:24:50
+											span.body INFO: Eunice ate a candy
+										li.list-group-item
+											span.date 15:23:22
+											span.body WARN: somrthing has been stolen
+
+.modal.fade#addMachineForm(tabindex='-1', role='dialog')
+	.modal-dialog(role='document')
+		.modal-content
+			.modal-header
+				button.close(type='button', data-dismiss='modal', aria-label='Close')
+					span(aria-hidden='true') ×
+				h4.modal-title Add Machine
+			.modal-body
+				form
+					.form-group
+						input(name='machine-ip', placeholder='Machine IP').form-control
+					.form-group
+						input(name='machine-name', placeholder='Set your Machine Name').form-control
+			.modal-footer
+				button.btn.btn-success(type='button', id='addMachineButton') Add Machine
+				button.btn.btn-default(type='button', data-dismiss='modal') Close
+.modal.fade#alert(tabindex='-1', role='dialog')
+	.modal-dialog(role='document')
+		.modal-content
+			.modal-header#alertHeader
+				button.close(type='button', data-dismiss='modal', aria-label='Close')
+					span(aria-hidden='true') ×
+				h4.modal-title
+			.modal-body#alertMessage
+				p
+			.modal-footer
+				button.btn.btn-default(type='button', data-dismiss='modal') Close
+.modal.fade#machineInfo(tabindex='-1', role='dialog')
+	.modal-dialog(role='document')
+		.modal-content
+			.modal-header#machineInfoHeader
+				button.close(type='button', data-dismiss='modal', aria-label='Close')
+					span(aria-hidden='true') ×
+				h4.modal-title
+			.modal-body#machineInfoMessage
+				p
+			.modal-footer
+				button.btn.btn-default(type='button', data-dismiss='modal') Close

@@ -1,0 +1,28 @@
+language: node_js
+node_js:
+  - "7"
+sudo: false
+env:
+  global:
+    secure: "xSv+jKZzk13X7Ip13J6QDyknAic5N77GQcYBQ1bSiVd5776+LGQXomx3bJDyli8DGiBYEJ2oGxiGQxArQoC8fjURo+W3QCDzCY1w7fyHWYoawoW2sJJfbiJgukVCShSuJhGmRY5pwkkuIEvnfYdCBpxp850a9zgcLiuhHlbfnS3LTH0kJQdwn04qwdl0aHdqpZbJpzLxrXIyD44G4mMDrEOGelNbf/CKiIv2uEQEU9pyafKAtAl18BZTkqmXMKqsZodn4oOTiAScjasSBCNsxZa1Yj5my3V/EXpMsF6K0rA10Amju+p2pjXvbe7+qw/Fwsz+u1Or65ifPAHkdOIXsqj+blOOZ9lrMIrMgqXjWFV00i2OhfhrVjUkQW4UDlcrKKaYPN1EjPgF4CJHg9YYaAoKyPuezjSVpsrXQfCr2Mg6IO/4nv/gZ0X6ldZ9+0qbZN34GewUxRgIHe1MC3tBKRrFIi3pItPhFz8sAAOr2JpTV7bZl37AdqCgXzuU3AteNNEtX1VBZ+vIE9yP78hEqHxmkFL/5XMeKgu72XtZ8L/89kWi4UhNUSxHr1CGuzs18+yLav+j9s3ykdDHK06vs87k7W1EmLR1EaoCH6B+Tk1kA0iyC8HkfmemrvaFRBHf+g4f8AXB6QJ2wsGY8UnQzVHWUFVPrsuwcmJe/yqelKg="
+    secure: "QMiSoB+wAYfwadiQEx9gEqCJ7MTtSecPeHPafvj+mjzPSfILcLxy4eOVBSBE/u+23UjPdAWy2f2/RWMTQK/TLtDxLBINO479WPJASz0snPvfp7Hdgo9qUgopiQb2/1vtMU6iQBD++M7uznkyGi3MLYz7r5TdR8a0ip1Cisu5ncHe+5Al0wgzMU7+KqMueAElSiDCATLT5HcIIqnGB3Sbk61PCa0Cb84jPecMyady7+ZTeNttJa5p7ojzdN2Amj0p6wMymHrM8UkK3/SMsNd8kD0eXwha8agsXZWnnq0jWY24YfUKtF6M9twYh8HyYF2gYjf8pcwl8tNNrJseEqYR2AU82SGwjxsTts17JBHntx9qJZ7KHts7OFKH3RT2gbgf0GbdThqDu8Oki3wy5OamxXSE8Fd6ibQqr9FQabwJk+PL9XcCpmu0ih/4rKxsmz1TVQ53gVzJCu1ueli9pabd9i0jFh8UDoIRzV6lhQjkhvxo8Lc7AylMj8uu6J/WYDvvK3dc2Fqsn6BOVS3HbMW7MwTGnY0deoOJhnUxG43zvZ13W+h+xvmLQjtQc3/B9TJ1bSLPVDeYAkRbbeYaa99VA9Gbpe8IVPYsnDjC61sPjCL4JjPlxgMulGjnxe/sqA0e2z6T8fguabIX3c+OqNsacZG+YqgAnBAi5jKEXPOcDls="
+    - DEPLOY_PATH=/var/html/node/icu
+addons:
+    ssh_known_hosts:
+      - vps.noob.tw
+    apt:
+      packages:
+        - sshpass
+before_script:
+  - npm install -g eslint --depth=0 || npm install -g eslint
+script:
+  - eslint --fix server.js
+after_success:
+  - test $TRAVIS_BRANCH = "master" && tar -czf package.tar.gz --exclude='.git' --exclude='./node_modules'
+  - test $TRAVIS_BRANCH = "master" && export SSHPASS=$SERVER_PASS
+  - test $TRAVIS_BRANCH = "master" && sshpass -e scp package.tar.gz Noob@SERVER_HOST:$DEPLOY_PATH
+  - test $TRAVIS_BRANCH = "master" && sshpass -e ssh Noob@$DEPLOY_HOST "cd /var/www/html/node/icu; tar -xzf package.tar.gz; rm package.tar.gz; npm install; echo Fine. Deployed.;"
+cache:
+  apt: true
+  directories:
+   - node_modules
