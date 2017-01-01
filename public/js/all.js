@@ -136,7 +136,11 @@ $(document).ready(function() {
 
 		var yAxisFreemem = function(d){
 			console.log('MEM:' + d);
-			return `${d/1000} MB`
+			if(d > 1048576){
+				return `${d/1000000} GB`;
+			}else{
+				return `${d/1000} MB`;
+			}
 		};
 
 		$('#machineInfoNavBar').on('click', 'li', function(event) {

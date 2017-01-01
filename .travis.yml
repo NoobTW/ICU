@@ -2,6 +2,9 @@ language: node_js
 node_js:
   - "7"
 sudo: false
+branches:
+  only:
+    - master
 env:
   global:
     - secure: "BaIQFobdnGVPcj+eqLqWdeuXnAgXGiP90lJ76ZAQKNehRq8dXXZaCUd+Mzl2mOGEVlaMNGDSZwq3PEjZICBMa1OtUXOEUV6KnS5nSAvpMLN6tSKNDCUkO49M5P8nmYIacYhluLfbMaQvl9vbsH3f+h+mx+PHx7A5lYEdlJX/Lsj6+lucUfP/yUA99O8KY/uQmwoOoifl2EVeF2fgFOrk7sMJhjAsMXS5A3631Mpudi9EpG8M6VCJZ6NNtX3qE5U7oh+ngftoirNrihsTSgDXyCxJ2fqavqcRoqswGmPamLT36g1eSr5FqMapUOaEzDunKyrw8mTthjrS+pqt0FHtvnQ+aAnJtfx+oMKvX4eDN4xTE5ll7Op8eB3B5TphU8oSIhqtqfLpI6S66GhzausuwOifJzmS0p0ZGatbCnm9tmGDk4tui9VtUK5MOeDrpWoY+A06WUApfEPybzUf0A9aXENsY6TY3/VWD8cne3GatmihEpFT7+jIdnwwTLj6Fy3As4zfHp9Hcfl+b/mdxrM6eHa5QMriEmEpnxsDvjLhT0qFD1iHITHvYPb/+5B3FsC5n46wjYuXKHb8w0yI5dx4gDxosAnoQZow6U6pzJIGkMtLIB0eYkFbc0FVyC5K2hIJXqkRVwqdxtWK0AkHwwanK1XE1CTMmWGCxR6Ptv2LqH8="
@@ -18,10 +21,10 @@ before_script:
 script:
   - eslint --fix server.js
 after_success:
-  - test $TRAVIS_BRANCH = "master" && tar -czf package.tar.gz --exclude='.git' --exclude='./node_modules' *
-  - test $TRAVIS_BRANCH = "master" && export SSHPASS=$SERVER_PASS
-  - test $TRAVIS_BRANCH = "master" && sshpass -e scp package.tar.gz Noob@$SERVER_HOST:$DEPLOY_PATH
-  - test $TRAVIS_BRANCH = "master" && sshpass -e ssh Noob@$SERVER_HOST "cd /var/www/node/icu; tar -xzf package.tar.gz; rm package.tar.gz; npm install; echo Fine. Deployed.;"
+  - tar -czf package.tar.gz --exclude='.git' --exclude='./node_modules' *
+  - export SSHPASS=$SERVER_PASS
+  - sshpass -e scp package.tar.gz Noob@$SERVER_HOST:$DEPLOY_PATH
+  - sshpass -e ssh Noob@$SERVER_HOST "cd /var/www/node/icu; tar -xzf package.tar.gz; rm package.tar.gz; npm install; echo Fine. Deployed.;"
 cache:
   apt: true
   directories:

@@ -399,9 +399,11 @@ app
 	let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 	if(data.type && data.body){
 		mc.connect(HOST_MONGO, (err, db) => {
-			var collection = db.collection('log');
+			var collection = db.collection('machine');
 			collection.find({ip: ip}).toArray((err, docs) => {
+				console.log(docs.length);
 				if(!err && docs.length){
+					console.log('test');
 					var owner = docs[0].owner;
 					var new_log = {
 						owner: owner,
@@ -410,7 +412,8 @@ app
 						body: data.body,
 						time: new Date()
 					};
-					collection.insert(new_log, (err, res) => {
+					collection = db.collection('log');
+					collection.insert(new_log, (err) => {
 						if(!err){
 							res.writeHead(200, {'Content-Type': MIME_JSON});
 							res.write('{result: 0}');
