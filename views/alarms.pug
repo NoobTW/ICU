@@ -53,16 +53,23 @@ html(lang='en')
 										|  Alarms
 						.ICU-widget-container.gateway-list
 							.ICU-widget-wrapper
-								div.panel.panel-default
-									div.panel-heading Recent Events/Alarms
-									ul.list-group
-										- if(log.length == 0){
-											li.list-group-item= 'No events/alarms now.'
-										- } else {
-											- for (var i=0;i<log.length;i++){
-												li.list-group-item= log[i].body
-											- }
-										- }
+								h3 Recent Events/Alarms
+								table.ICU-widget-table.table.table-hover#alarmsTable.table-stripe
+									thead
+										tr
+											th Time
+											th Name
+											th Time
+											th Type
+											th Message
+									tbody
+										tr
+											td 123
+											td 123
+											td 123
+											td 123
+											td 123
+
 .modal.fade#addMachineForm(tabindex='-1', role='dialog')
 	.modal-dialog(role='document')
 		.modal-content
