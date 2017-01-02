@@ -44,10 +44,10 @@ $(document).ready(function() {
 		var uptimeM = Math.floor(uptime % 3600 / 60);
 		var uptimeS = uptime % 60;
 		var uptimeString = '';
-		uptimeString += uptimeD !== 0 ? uptimeD + '天' : '';
-		uptimeString += uptimeH !== 0 ? uptimeH + '時' : '';
-		uptimeString += uptimeM !== 0 ? uptimeM + '分' : '';
-		uptimeString += uptimeS + '秒';
+		uptimeString += uptimeD !== 0 ? uptimeD + 'd' : '';
+		uptimeString += uptimeH !== 0 ? uptimeH + 'h' : '';
+		uptimeString += uptimeM !== 0 ? uptimeM + 'm' : '';
+		uptimeString += uptimeS + 's';
 		return uptimeString;
 	}
 
