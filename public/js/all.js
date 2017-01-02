@@ -225,6 +225,7 @@ $(document).ready(function() {
 
 	$('#loginButton').on('click', function(event) {
 		event.preventDefault();
+		$(this).html('<i class="fa fa-spinner fa-spin"></i>');
 		var email = $('input[name=email]').val();
 		var password = $('input[name=password]').val();
 
