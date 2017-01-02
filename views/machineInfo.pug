@@ -75,3 +75,14 @@ block body
 								div#graphCPU
 								h3 Freemem
 								div#graphFreemem
+	.modal.fade#alert(tabindex='-1', role='dialog')
+		.modal-dialog(role='document')
+			.modal-content
+				.modal-header#alertHeader
+					button.close(type='button', data-dismiss='modal', aria-label='Close')
+						span(aria-hidden='true') ×
+					h4.modal-title
+				.modal-body#alertMessage
+					p
+				.modal-footer
+					a.goHome.btn.btn-default(href='/', data-dismiss='modal') Close

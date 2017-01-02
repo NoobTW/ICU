@@ -11,8 +11,7 @@ $(document).ready(function() {
 		var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
 		return regex.test(email);
 	}
-
-	function getManchineInfo(machineIP, callback) {
+	function getMachineInfo(machineIP, callback) {
 		var data = JSON.stringify({ip: machineIP});
 		$.ajax({
 			url: '/machine',
@@ -23,6 +22,17 @@ $(document).ready(function() {
 				var machineInfo = $.parseJSON(jqXHR.responseText);
 				var response = machineInfo.result;
 				callback(response, machineInfo);
+			}
+		});
+	}
+
+	function isOnline(ip, view){
+		console.log(view);
+		getMachineInfo(ip, function(response){
+			if(response === 0){
+				$(view).html('<span class="online">●</span>');
+			}else{
+				$(view).html('<span class="offline">✘</span>');
 			}
 		});
 	}
@@ -69,11 +79,11 @@ $(document).ready(function() {
 							"<td class='text-center'>" + "<a href='" + machineInfoURL + "' class='btn btn-info'>"+"<i class='fa fa-eye'></i>" + "</a>" + "</td>" +
 							"<td class='text-center'>" + machines[i].name + "</td>" +
 							"<td>" + machines[i].ip + "</td>" +
-							"<td>" + ((machines[i].online === true) ? "<span class='online'>●</span>" : "<span class='offline'>✘</span>") + "</td>" + 
-							"<td>" + "<button type='button' data-ip='" + machines[i].ip + "' class='btn btn-primary'>修改</button>" + "</td>" +
-							"<td>" + "<button type='button' data-ip='" + machines[i].ip + "' class='btn btn-danger'>刪除</button>" + "</td>" +
-						"</tr>"
-						);
+							"<td class='text-center status'><i class='fa fa-spinner fa-spin'></i></td>" + 
+							"<td>" + "<button type='button' data-ip='" + machines[i].ip + "' class='btn btn-primary'>Edit</button>" + "</td>" +
+							"<td>" + "<button type='button' data-ip='" + machines[i].ip + "' class='btn btn-danger'>Delete</button>" + "</td>" +
+						"</tr>");
+						isOnline(machines[i].ip, $('.status')[i]);
 					}
 				}
 			}
@@ -86,63 +96,60 @@ $(document).ready(function() {
 
 	if ($(location)[0].pathname === '/machineInfo') {
 
-		var intervalBasicInfo = setInterval(function(){
-			if ($(location)[0].pathname === '/machineInfo') {
-				var urlSearch = $(location)[0].search;
-				var machineIP = urlSearch.split('&')[0].split('=')[1];
-				getManchineInfo(machineIP, function(response, machineInfo) {
-						if (response !== 0) {
-							$('#alertHeader').text('Warning');
-							$('#alertMessage').find('p').text("Your Machine is Dead, ASshole");
-							$('#alert').modal('show');
-							return false;
-						}
-						if (response === 0) {
-							$('#OS').text(machineInfo.os);
-							$('#upTime').text(getUptime(machineInfo.uptime));
-							$('#cpuUsage').text(machineInfo.cpu_usage + '%');
-							$('#cpuPlatform').text(machineInfo.cpu_platform);
-							$('#cpuModel').text(machineInfo.cpu_model);
-							$('#cpuCores').text(machineInfo.cpu_cores);
-							$('#load').text(machineInfo.load[0] + ', ' + machineInfo.load[1] + ', ' + machineInfo.load[2]);
-							$('#freemem').text(getFreemem(machineInfo.freemem));
-							$('#mac').text(machineInfo.mac);
-							return false;
-						}
-				});
-			}
-		},1000);
-
-		var intervalGraph = setInterval(function(){
-			getManchineInfo(machineIP, function(response, machineInfo){
-				count++;
-				render('graphCPU', machineInfo.cpu_usage, dataCPU, count, time, yAxisCPU);
-				render('graphFreemem', machineInfo.freemem/1024, dataFreemem, count, time, yAxisFreemem);
-			});
-		}, 1000);
-
-		var time = Date.now() / 1000 | 0;
 
 		var urlSearch = $(location)[0].search;
 		var machineIP = urlSearch.split('&')[0].split('=')[1];
-		var dataCPU = [];
-		var dataFreemem = [];
-		var count = 0;
-		$('#machineGraphContent').hide();
-
-		var yAxisCPU = function(d){
-			console.log('CPU:' + d);
-			return d+'%';
-		};
-
-		var yAxisFreemem = function(d){
-			console.log('MEM:' + d);
-			if(d > 1048576){
-				return `${d/1000000} GB`;
-			}else{
-				return `${d/1000} MB`;
+		getMachineInfo(machineIP, function(response, machineInfo) {
+			if (response !== 0) {
+				$('#alertHeader').text('Warning');
+				$('#alertMessage').find('p').text("Your Machine is Dead, ASshole");
+				$('#alert').modal('show');
 			}
-		};
+			if (response === 0) {
+				var intervalBasicInfo = setInterval(function(){
+					$('#OS').text(machineInfo.os);
+					$('#upTime').text(getUptime(machineInfo.uptime));
+					$('#cpuUsage').text(machineInfo.cpu_usage + '%');
+					$('#cpuPlatform').text(machineInfo.cpu_platform);
+					$('#cpuModel').text(machineInfo.cpu_model);
+					$('#cpuCores').text(machineInfo.cpu_cores);
+					$('#load').text(machineInfo.load[0] + ', ' + machineInfo.load[1] + ', ' + machineInfo.load[2]);
+					$('#freemem').text(getFreemem(machineInfo.freemem));
+					$('#mac').text(machineInfo.mac);
+
+					var intervalGraph = setInterval(function(){
+						getMachineInfo(machineIP, function(response, machineInfo){
+							count++;
+							render('graphCPU', machineInfo.cpu_usage, dataCPU, count, time, yAxisCPU);
+							render('graphFreemem', machineInfo.freemem/1024, dataFreemem, count, time, yAxisFreemem);
+						});
+					}, 1000);
+
+					var time = Date.now() / 1000 | 0;
+
+					var urlSearch = $(location)[0].search;
+					var machineIP = urlSearch.split('&')[0].split('=')[1];
+					var dataCPU = [];
+					var dataFreemem = [];
+					var count = 0;
+					$('#machineGraphContent').hide();
+
+					var yAxisCPU = function(d){
+						console.log('CPU:' + d);
+						return d+'%';
+					};
+
+					var yAxisFreemem = function(d){
+						console.log('MEM:' + d);
+						if(d > 1048576){
+							return `${d/1000000} GB`;
+						}else{
+							return `${d/1000} MB`;
+						}
+					};
+				});
+			}
+		});
 
 		$('#machineInfoNavBar').on('click', 'li', function(event) {
 			event.preventDefault();
@@ -212,7 +219,7 @@ $(document).ready(function() {
 		// $('#machinesTable').on('click', '#displayMachineInfo', function(event) {
 		// 	event.preventDefault();
 		// 	var ip = $(this).data('ip');
-		// 	getManchineInfo(ip, function(response, machineInfo) {
+		// 	getMachineInfo(ip, function(response, machineInfo) {
 		// 		// machineInfo = $.parseJSON(machineInfo);
 		// 		$('#machineInfoHeader').text("Machine Information");
 		// 		$('#machineInfoMessage').find('p').text(machineInfo);
@@ -415,5 +422,7 @@ $(document).ready(function() {
 			}
 		});
 	});
-
+	$('body').on('click', '.goHome', function(){
+		location.href = '/';
+	});
 });

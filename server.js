@@ -324,23 +324,26 @@ app
 						result: 0,
 						machines: docs
 					};
-					let docs_count = docs.length;
-					for(let i=0;i<docs.length;i++){
-						request.get('http://' + docs[i].ip + ':' + PORT_ICU_CLIENT + '/status', {
-							timeout: 5000
-						}, (err, resp) => {
-							if(!err && resp){
-								result.machines[i].online = true;
-							}else{
-								result.machines[i].online = false;
-							}
-							if(!--docs_count){
-								res.writeHead(200, MIME_JSON);
-								res.write(JSON.stringify(result));
-								res.end();
-							}
-						});
-					}
+					// let docs_count = docs.length;
+					// for(let i=0;i<docs.length;i++){
+					// 	request.get('http://' + docs[i].ip + ':' + PORT_ICU_CLIENT + '/status', {
+					// 		timeout: 5000
+					// 	}, (err, resp) => {
+					// 		if(!err && resp){
+					// 			result.machines[i].online = true;
+					// 		}else{
+					// 			result.machines[i].online = false;
+					// 		}
+					// 		if(!--docs_count){
+					// 			res.writeHead(200, MIME_JSON);
+					// 			res.write(JSON.stringify(result));
+					// 			res.end();
+					// 		}
+					// 	});
+					// }
+					res.writeHead(200, MIME_JSON);
+					res.write(JSON.stringify(result));
+					res.end();
 				}else if(!err){
 					result = {
 						result: -1
