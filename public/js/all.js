@@ -89,17 +89,22 @@ $(document).ready(function() {
 		});
 	}
 
-	function notifyMe(msg) {
-		if (!("Notification" in window)) {
-			console.log('gggg');
-		} else if (Notification.permission === "granted") {
-			var notification = new Notification(msg);
-		} else if (Notification.permission !== 'denied') {
-			Notification.requestPermission(function (permission) {
-				if (permission === "granted") {
-					var notification = new Notification(msg);
-				}
+	function notifyMe(msg, title, url) {
+		if (Notification.permission !== "granted"){
+			console.log('gg');
+			Notification.requestPermission();
+		} else {
+			console.log('hi notify');
+			var notification = new Notification('ICU', {
+				body: msg,
 			});
+
+			if(url){
+				notification.onclick = function () {
+					window.open("");
+				};
+			}
+
 		}
 	}
 
