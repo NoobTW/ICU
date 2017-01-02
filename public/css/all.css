@@ -226,3 +226,13 @@ path {
 	padding-left: .5rem;
 	font-weight: 400;
 }
+
+.online{
+	color: green;
+	font-size: 2rem;
+}
+
+.offline{
+	color: red;
+	font-size: 2rem;
+}

@@ -1,46 +1,38 @@
-doctype html
-html
-  head
-    meta(charset='UTF-8')
-    meta(name='viewport', content='width=device-width, initial-scale=1.0')
-    title Login
-    link(rel='stylesheet', href='/public/css/bootstrap.min.css')
-    link(rel='stylesheet', href='/public/css/font-awesome.min.css')
-    link(rel='stylesheet', href='/public/css/all.css')
-    script(src='/public/js/jquery-3.1.1.min .js')
-    script(src='/public/js/sha256.min.js')
-    script(src='/public/js/bootstrap.min.js')
-    script(src='/public/js/all.js')
-  body
-    #loader
-    .container-fluid.relative.loginBody.fill-screen.content
-      .row.loginPage
-        .col-md-4.col-md-offset-4
-          .panel.panel-default
-            .panel-heading
-              h1 ICU Login
-            .panel-body
-              form(action='/login' method='post')
-                .form-group
-                  input.form-control(name='email', type='email', placeholder='Email', required='required')#loginEmail
-                .form-group
-                  input.form-control(name='password', type='password', placeholder='Password', required='required')#loginPassword
-                button.btn.btn-success.btn-lg.btn-block#loginButton(type='button') Login
-                a.btn.btn-primary.btn-lg.btn-block(href='/register') Register
-                a.btn.btn-facebookLogin.fa.fa-facebook-official.fa-2x.btn-lg.btn-block(href='/auth/facebook')
-  .modal.fade#alert(tabindex='-1', role='dialog')
-    .modal-dialog(role='document')
-      .modal-content
-        .modal-header#alertHeader
-          button.close(type='button', data-dismiss='modal', aria-label='Close')
-            span(aria-hidden='true') ×
-          h4.modal-title 
-        .modal-body#alertMessage
-          p 
-        .modal-footer
-          button.btn.btn-default(type='button', data-dismiss='modal') Close
-  if success == true
-    script.
-      $('.modal-title').text('Success')
-      $('.modal-body').find('p').text("Register Succeed!")
-      $('.modal').modal('show')
+extends common/header
+
+block title
+	title Login
+
+block body
+	#loader
+	.container-fluid.relative.loginBody.fill-screen.content
+		.row.loginPage
+			.col-md-4.col-md-offset-4
+				.panel.panel-default
+					.panel-heading
+						h1 ICU Login
+					.panel-body
+						form(action='/login' method='post')
+							.form-group
+								input.form-control(name='email', type='email', placeholder='Email', required='required')#loginEmail
+							.form-group
+								input.form-control(name='password', type='password', placeholder='Password', required='required')#loginPassword
+							button.btn.btn-success.btn-lg.btn-block#loginButton(type='button') Login
+							a.btn.btn-primary.btn-lg.btn-block(href='/register') Register
+							a.btn.btn-facebookLogin.fa.fa-facebook-official.fa-2x.btn-lg.btn-block(href='/auth/facebook')
+	.modal.fade#alert(tabindex='-1', role='dialog')
+		.modal-dialog(role='document')
+			.modal-content
+				.modal-header#alertHeader
+					button.close(type='button', data-dismiss='modal', aria-label='Close')
+						span(aria-hidden='true') ×
+					h4.modal-title 
+				.modal-body#alertMessage
+					p 
+				.modal-footer
+					button.btn.btn-default(type='button', data-dismiss='modal') Close
+	if success == true
+		script.
+			$('.modal-title').text('Success')
+			$('.modal-body').find('p').text("Register Succeed!")
+			$('.modal').modal('show')

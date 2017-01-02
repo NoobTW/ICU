@@ -69,6 +69,7 @@ $(document).ready(function() {
 							"<td class='text-center'>" + "<a href='" + machineInfoURL + "' class='btn btn-info'>"+"<i class='fa fa-eye'></i>" + "</a>" + "</td>" +
 							"<td class='text-center'>" + machines[i].name + "</td>" +
 							"<td>" + machines[i].ip + "</td>" +
+							"<td>" + ((machines[i].online === true) ? "<span class='online'>●</span>" : "<span class='offline'>✘</span>") + "</td>" + 
 							"<td>" + "<button type='button' data-ip='" + machines[i].ip + "' class='btn btn-primary'>修改</button>" + "</td>" +
 							"<td>" + "<button type='button' data-ip='" + machines[i].ip + "' class='btn btn-danger'>刪除</button>" + "</td>" +
 						"</tr>"
