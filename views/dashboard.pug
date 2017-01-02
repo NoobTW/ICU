@@ -101,3 +101,17 @@ block body
 				.modal-footer
 					button.btn.btn-danger(type='button', id='confirmDeleteMachine') Go ahead anyway
 					button.btn.btn-primary(type='button', data-dismiss='modal') No
+	.modal.fade#editMachineForm(tabindex='-1', role='dialog')
+		.modal-dialog(role='document')
+			.modal-content
+				.modal-header
+					button.close(type='button', data-dismiss='modal', aria-label='Close')
+						span(aria-hidden='true') ×
+					h4.modal-title Add Machine
+				.modal-body
+					form
+						.form-group
+							input(name='edit-machine-name', placeholder='Set your Machine Name').form-control
+				.modal-footer
+					button.btn.btn-success(type='button', id='doEditMachineButton') Edit Machine
+					button.btn.btn-default(type='button', data-dismiss='modal') Close
