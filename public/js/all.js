@@ -19,6 +19,7 @@ $(document).ready(function() {
 			dataType: 'application/json; charset=utf-8',
 			data: {ip: machineIP},
 			complete: function(jqXHR, textStatus) {
+				console.log(jqXHR.responseText);
 				var machineInfo = $.parseJSON(jqXHR.responseText);
 				var response = machineInfo.result;
 				callback(response, machineInfo);
@@ -99,55 +100,53 @@ $(document).ready(function() {
 
 		var urlSearch = $(location)[0].search;
 		var machineIP = urlSearch.split('&')[0].split('=')[1];
-		getMachineInfo(machineIP, function(response, machineInfo) {
-			if (response !== 0) {
-				$('#alertHeader').text('Warning');
-				$('#alertMessage').find('p').text("Your Machine is Dead, ASshole");
-				$('#alert').modal('show');
-			}
-			if (response === 0) {
-				$('#machineGraphContent').hide();
-				var intervalBasicInfo = setInterval(function(){
-					$('#OS').text(machineInfo.os);
-					$('#upTime').text(getUptime(machineInfo.uptime));
-					$('#cpuUsage').text(machineInfo.cpu_usage + '%');
-					$('#cpuPlatform').text(machineInfo.cpu_platform);
-					$('#cpuModel').text(machineInfo.cpu_model);
-					$('#cpuCores').text(machineInfo.cpu_cores);
-					$('#load').text(machineInfo.load[0] + ', ' + machineInfo.load[1] + ', ' + machineInfo.load[2]);
-					$('#freemem').text(getFreemem(machineInfo.freemem));
-					$('#mac').text(machineInfo.mac);
 
-					var intervalGraph = setInterval(function(){
-						getMachineInfo(machineIP, function(response, machineInfo){
-							count++;
-							render('graphCPU', machineInfo.cpu_usage, dataCPU, count, time, yAxisCPU);
-							render('graphFreemem', machineInfo.freemem/1024, dataFreemem, count, time, yAxisFreemem);
-						});
-					}, 1000);
+		var time = Date.now() / 1000 | 0;
+		var dataCPU = [];
+		var dataFreemem = [];
+		var count = 0;
 
-					var time = Date.now() / 1000 | 0;
-
+		$('#machineGraphContent').hide();
+		var intervalBasicInfo = setInterval(function(){
+			getMachineInfo(machineIP, function(response, machineInfo) {
+				if (response !== 0) {
+					$('#alertHeader').text('Warning');
+					$('#alertMessage').find('p').text("Your Machine is Dead, ASshole");
+					$('#alert').modal('show');
+					intervalBasicInfo = null;
+				} else {
 					var urlSearch = $(location)[0].search;
 					var machineIP = urlSearch.split('&')[0].split('=')[1];
-					var dataCPU = [];
-					var dataFreemem = [];
-					var count = 0;
 
-					var yAxisCPU = function(d){
-						return d+'%';
-					};
 
-					var yAxisFreemem = function(d){
-						if(d > 1048576){
-							return `${d/1000000} GB`;
-						}else{
-							return `${d/1000} MB`;
-						}
-					};
-				});
-			}
-		});
+						$('#OS').text(machineInfo.os);
+						$('#upTime').text(getUptime(machineInfo.uptime));
+						$('#cpuUsage').text(machineInfo.cpu_usage + '%');
+						$('#cpuPlatform').text(machineInfo.cpu_platform);
+						$('#cpuModel').text(machineInfo.cpu_model);
+						$('#cpuCores').text(machineInfo.cpu_cores);
+						$('#load').text(machineInfo.load[0] + ', ' + machineInfo.load[1] + ', ' + machineInfo.load[2]);
+						$('#freemem').text(getFreemem(machineInfo.freemem));
+						$('#mac').text(machineInfo.mac);
+
+						var yAxisCPU = function(d){
+							return d+'%';
+						};
+
+						var yAxisFreemem = function(d){
+							if(d > 1048576){
+								return `${d/1000000} GB`;
+							}else{
+								return `${d/1000} MB`;
+							}
+						};
+
+						count++;
+						render('graphCPU', machineInfo.cpu_usage, dataCPU, count, time, yAxisCPU);
+						render('graphFreemem', machineInfo.freemem/1024, dataFreemem, count, time, yAxisFreemem);
+				}
+			});
+		}, 1000);
 
 		$('#machineInfoNavBar').on('click', 'li', function(event) {
 			event.preventDefault();
@@ -160,7 +159,6 @@ $(document).ready(function() {
 			$('#machineInfoContent').show();
 		});
 		$('#machineInfoNavBar').on('click', '#machineChartButton', function() {
-			console.log('IM GAY')
 			$('.page').hide();
 			$('#machineGraphContent').show();
 		});
@@ -183,6 +181,7 @@ $(document).ready(function() {
 			var y = d3.scale.linear().domain([0, max_data || 1]).range([h, 0]);
 			var line = d3.svg.line()
 				.x(function(d,i) {
+					console.log(i+count + ',' + d);
 					return x(i+count);
 				})
 				.y(function(d) {

@@ -376,7 +376,7 @@ app
 	if(sess.email){
 		mc.connect(HOST_MONGO, (err, db) => {
 			var collection = db.collection('log');
-			collection.find({$query: {owner: sess.email}, $orderby: {time: -1}, $limit: 50}).toArray((err, docs) => {
+			collection.find({$query: {owner: sess.email}, $orderby: {time: -1}}, {}, {limit: 50}).toArray((err, docs) => {
 				if(!err && docs.length){
 					res.render('alarms', {
 						log: docs
