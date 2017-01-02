@@ -79,8 +79,8 @@ $(document).ready(function() {
 							"<td class='text-center'>" + machines[i].name + "</td>" +
 							"<td>" + machines[i].ip + "</td>" +
 							"<td class='text-center status'><i class='fa fa-spinner fa-spin'></i></td>" + 
-							"<td>" + "<button type='button' data-ip='" + machines[i].ip + "' class='btn btn-primary'>Edit</button>" + "</td>" +
-							"<td>" + "<button type='button' data-ip='" + machines[i].ip + "' class='btn btn-danger'>Delete</button>" + "</td>" +
+							"<td>" + "<button type='button' id='editMachineButton' data-ip='" + machines[i].ip + "' class='btn btn-primary'>Edit</button>" + "</td>" +
+							"<td>" + "<button type='button' id='deleteMachineButton' data-ip='" + machines[i].ip + "' class='btn btn-danger'>Delete</button>" + "</td>" +
 						"</tr>");
 						isOnline(machines[i].ip, $('.status')[i]);
 					}
@@ -370,53 +370,106 @@ $(document).ready(function() {
 			dataType: "json",
 			complete: function(jqXHR, textStatus) {
 				var response = $.parseJSON(jqXHR.responseText).result;
+
 				if (response === -1) {
 					$('#alertHeader').text('Error');
 					$('#alertMessage').find('p').text("Your IP type is incorrect");
 					$('#alert').modal('show');
-					return false;
 				}
 
-				if (response === -2) {
+				else if (response === -2) {
 					$('#alertHeader').text('Error');
-					$('#alertMessage').find('p').text("This machine is existed");
+					$('#alertMessage').find('p').text("This machine doesn't exist");
 					$('#alert').modal('show');
-					return false;
 				}
 
-				if (response === -3) {
+				else if (response === -3) {
 					$('#alertHeader').text('Error');
 					$('#alertMessage').find('p').text("This machine doesn't response");
 					$('#alert').modal('show');
-					return false;
 				}
 
-				if (response === -998) {
+				else if (response === -998) {
 					$('#alertHeader').text('Error');
 					$('#alertMessage').find('p').text("User isn't login");
 					$('#alert').modal('show');
 					return false;
 				}
 
-				if (response === -999) {
+				else if (response === -999) {
 					$('#alertHeader').text('Error');
 					$('#alertMessage').find('p').text("Database Error");
 					$('#alert').modal('show');
-					return false;
 				}
 
-				if (response === 0) {
+				else if (response === 0) {
 					$('#alertHeader').text('Success');
 					$('#alertMessage').find('p').text("Machine Added!");
 					$('#alert').modal('show');
 					$('#machinesTable > tbody').empty();
 					appendMachineTable();
-					return false;
 				}
 			}
 		});
 	});
 	$('body').on('click', '.goHome', function(){
 		location.href = '/';
+	});
+
+	$('#machinesTable').on('click', '#deleteMachineButton', function(event) {
+		event.preventDefault();
+		ip = $(this).data('ip');
+		$('#confirmDeleteMachine').data('ip', ip);
+		$('#checkDeleteMachineHeader').html('<b>Are you sure?</b>');
+		$('#checkDeleteMachineMessage').text('Do you want to delete this machine?');
+		$('#checkDeleteMachine').modal('show');
+	});
+
+	$('#confirmDeleteMachine').on('click', function(event) {
+		event.preventDefault();
+		$('#checkDeleteMachine').modal('hide');
+		ip = $(this).data('ip');
+		$.ajax({
+			url: '/machine',
+			type: 'DELETE',
+			dataType: 'application/json; charset=utf-8',
+			data: {ip: ip},
+			complete: function(jqXHR, textStatus) {
+				var response = $.parseJSON(jqXHR.responseText).result;
+
+				if (response === -1) {
+					$('#alertHeader').text('Error');
+					$('#alertMessage').find('p').text("IP type is incorrect");
+					$('#alert').modal('show');
+				}
+
+				else if (response === -2) {
+					$('#alertHeader').text('Error');
+					$('#alertMessage').find('p').text("This machine doesn't existed");
+					$('#alert').modal('show');
+				}
+
+				else if (response === -998) {
+					$('#alertHeader').text('Error');
+					$('#alertMessage').find('p').text("User isn't login");
+					$('#alert').modal('show');
+				}
+
+				else if (response === -999) {
+					$('#alertHeader').text('Error');
+					$('#alertMessage').find('p').text("Database Error");
+					$('#alert').modal('show');
+				}
+
+				else if (response === 0) {
+					$('#alertHeader').text('Success');
+					$('#alertMessage').find('p').text("Machine Delete!");
+					$('#alert').modal('show');
+					$('#machinesTable > tbody').empty();
+					appendMachineTable();
+				}
+			}
+		});
+		
 	});
 });
