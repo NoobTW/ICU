@@ -349,7 +349,6 @@ app
 					res.end();
 				}
 				collection.update({ip: data.ip}, {$set: {name: data.name}}, (err, result) => {
-					console.log(result);
 					if(!err&&result) {
 						result = {
 							result: 0

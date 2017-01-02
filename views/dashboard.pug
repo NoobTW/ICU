@@ -7,7 +7,8 @@ block body
 			.container-fluid
 				.navbar-header
 					a.navbar-brand(href='/')
-						| ICU
+						i.fa.fa-eye
+						|  ICU
 						h1 ICU
 				.collapse.navbar-collapse
 					ul.nav.navbar-nav.navbar-right
@@ -43,7 +44,6 @@ block body
 									|  My Machines
 							.col-sm-8
 								h4.align-right
-									input.search-machine(type='text', placeholder='Search')
 									button(type='button', id='openAddMachineButton').btn.btn-success
 										i.fa.fa-plus
 									a(href='https://noob.tw')
@@ -72,9 +72,9 @@ block body
 				.modal-body
 					form
 						.form-group
-							input(name='machine-ip', placeholder='Machine IP').form-control
-						.form-group
 							input(name='machine-name', placeholder='Set your Machine Name').form-control
+						.form-group
+							input(name='machine-ip', placeholder='Machine IP').form-control
 				.modal-footer
 					button.btn.btn-success(type='button', id='addMachineButton') Add Machine
 					button.btn.btn-default(type='button', data-dismiss='modal') Close

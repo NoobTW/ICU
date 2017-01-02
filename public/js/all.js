@@ -79,8 +79,8 @@ $(document).ready(function() {
 							"<td class='text-center'>" + machines[i].name + "</td>" +
 							"<td>" + machines[i].ip + "</td>" +
 							"<td class='text-center status'><i class='fa fa-spinner fa-spin'></i></td>" + 
-							"<td>" + "<button type='button' id='editMachineButton' data-ip='" + machines[i].ip + "' class='btn btn-primary'>Edit</button>" + "</td>" +
-							"<td>" + "<button type='button' id='deleteMachineButton' data-ip='" + machines[i].ip + "' class='btn btn-danger'>Delete</button>" + "</td>" +
+							"<td>" + "<button type='button' data-ip='" + machines[i].ip + "' class='btn btn-primary editMachineButton'>Edit</button>" + "</td>" +
+							"<td>" + "<button type='button' data-ip='" + machines[i].ip + "' class='btn btn-danger deleteMachineButton'>Delete</button>" + "</td>" +
 						"</tr>");
 						isOnline(machines[i].ip, $('.status')[i]);
 					}
@@ -93,7 +93,7 @@ $(document).ready(function() {
 		if (Notification.permission !== "granted"){
 			Notification.requestPermission();
 		} else {
-			var notification = new Notification('ICU', {
+			var notification = new Notification(title, {
 				icon: '/public/img/logo.png',
 				body: msg,
 			});
@@ -437,7 +437,7 @@ $(document).ready(function() {
 		location.href = '/';
 	});
 
-	$('#machinesTable').on('click', '#deleteMachineButton', function(event) {
+	$('#machinesTable').on('click', '.deleteMachineButton', function(event) {
 		event.preventDefault();
 		ip = $(this).data('ip');
 		$('#confirmDeleteMachine').data('ip', ip);
@@ -446,7 +446,7 @@ $(document).ready(function() {
 		$('#checkDeleteMachine').modal('show');
 	});
 
-	$('#machinesTable').on('click', '#editMachineButton', function(event) {
+	$('#machinesTable').on('click', '.editMachineButton', function(event) {
 		event.preventDefault();
 		ip = $(this).data('ip');
 		$('#doEditMachineButton').data('ip', ip);
@@ -458,6 +458,7 @@ $(document).ready(function() {
 		$('#editMachineForm').modal('hide');
 		ip = $(this).data('ip');
 		name = $("input[name='edit-machine-name']").val();
+		 $("input[name='edit-machine-name']").val('');
 		$.ajax({
 			url: 'machine',
 			type: 'PUT',
