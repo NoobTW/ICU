@@ -33,6 +33,29 @@ app
 	console.log('SERVER STARTED');
 });
 
+var current_alive_devices = [];
+setInterval(() => {
+	for(let machines in current_alive_devices){
+		if((new Date() / 1000 | 0) - current_alive_devices[machines].last_seen > 2 * 60){
+			mc.connect(HOST_MONGO, (err, db) => {
+				db.collection('machine').find({ip: current_alive_devices[machines].ip}).toArray((err, docs) => {
+					if(!err && docs.length){
+						var owner = docs[0].owner;
+						var new_log = {
+							owner: owner,
+							ip: current_alive_devices[machines].ip,
+							type: 'BOOT',
+							body: 'Device is down',
+							time: new Date()
+						};
+						db.collection('log').insert(new_log);
+					}
+					delete current_alive_devices[machines];
+				});
+			});
+		}
+	}
+}, 5000);
 
 app
 .get('/', (req, res) => {
@@ -70,8 +93,7 @@ app
 		res.end();
 	}else{
 		mc.connect(HOST_MONGO, (err, db) => {
-			var collection = db.collection('user');
-			collection.find({'email': data.email}).toArray((err, docs) => {
+			db.collection('user').find({'email': data.email}).toArray((err, docs) => {
 				var result = {};
 				if(!err && docs.length){
 					if(docs[0].password === data.password){
@@ -378,9 +400,34 @@ app
 			var collection = db.collection('log');
 			collection.find({$query: {owner: sess.email}, $orderby: {time: -1}}, {}, {limit: 50}).toArray((err, docs) => {
 				if(!err && docs.length){
-					res.render('alarms', {
-						log: docs
-					});
+					var dict_ip = {};
+					var docs_count = 0;
+					for(let i=0;i<docs.length;i++){
+						let time = new Date(docs[i].time).toString().split(' ');
+						docs[i].time = `${time[1]}.${time[2]} ${time[4]}`;
+						if(dict_ip[docs[i].ip]){
+							docs[i].ip = dict_ip[docs[i].ip];
+							docs_count++;
+							if(docs_count === docs.length){
+								res.render('alarms', {
+									log: docs
+								});
+							}
+						}else{
+							db.collection('machine').find({ip: docs[i].ip}).toArray((err, docs_machine) => {
+								if(!err && docs_machine.length){
+									dict_ip[docs[i].ip] = docs_machine[0].name;
+									docs[i].ip = docs_machine[0].name;
+								}
+								docs_count++;
+								if(docs_count === docs.length){
+									res.render('alarms', {
+										log: docs
+									});
+								}
+							});
+						}
+					}
 				}else if(!err){
 					res.render('alarms', {
 						log: []
@@ -397,13 +444,12 @@ app
 	}
 })
 
-.post('/message', (req, res) => {
+.post('/message/notify', (req, res) => {
 	let data = req.body;
 	let ip = req.headers['x-forwarded-for'].split(',')[0] || req.connection.remoteAddress;
 	if(data.type && data.body){
 		mc.connect(HOST_MONGO, (err, db) => {
-			var collection = db.collection('machine');
-			collection.find({ip: ip}).toArray((err, docs) => {
+			db.collection('machine').find({ip: ip}).toArray((err, docs) => {
 				if(!err && docs.length){
 					console.log('test');
 					var owner = docs[0].owner;
@@ -414,8 +460,7 @@ app
 						body: data.body,
 						time: new Date()
 					};
-					collection = db.collection('log');
-					collection.insert(new_log, (err) => {
+					db.collection('log').insert(new_log, (err) => {
 						if(!err){
 							res.writeHead(200, {'Content-Type': MIME_JSON});
 							res.write('{result: 0}');
@@ -429,6 +474,47 @@ app
 				}
 			});
 		});
+	}
+})
+
+.post('/message/boot', (req, res) => {
+	let data = req.body;
+	let ip = req.headers['x-forwarded-for'].split(',')[0] || req.connection.remoteAddress;
+
+	console.log(ip);
+	console.log(JSON.stringify(data));
+
+	if(data.type === 'BOOT' && ip){
+		if(current_alive_devices[ip]){
+			current_alive_devices[ip].last_seen = new Date() / 1000 | 0;
+		}else{
+			mc.connect(HOST_MONGO, (err, db) => {
+				db.collection('machine').find({ip: ip}).toArray((err, docs) => {
+					if(!err && docs.length){
+						current_alive_devices[ip] = {
+							name: docs[0].name,
+							last_seen: new Date() / 1000 | 0
+						};
+						var owner = docs[0].owner;
+						var new_log = {
+							owner: owner,
+							ip: ip,
+							type: 'BOOT',
+							body: 'Device is up',
+							time: new Date()
+						};
+						db.collection('log').insert(new_log);
+						res.writeHead(200, {'Content-Type': MIME_JSON});
+						res.write('{result: 0}');
+						res.end();
+					}else{
+						res.writeHead(200, {'Content-Type': MIME_JSON});
+						res.write('{result: "GG"}');
+						res.end();
+					}
+				});
+			});
+		}
 	}
 })
 

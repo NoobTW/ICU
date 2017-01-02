@@ -19,7 +19,6 @@ $(document).ready(function() {
 			dataType: 'application/json; charset=utf-8',
 			data: {ip: machineIP},
 			complete: function(jqXHR, textStatus) {
-				console.log(jqXHR.responseText);
 				var machineInfo = $.parseJSON(jqXHR.responseText);
 				var response = machineInfo.result;
 				callback(response, machineInfo);
@@ -28,7 +27,6 @@ $(document).ready(function() {
 	}
 
 	function isOnline(ip, view){
-		console.log(view);
 		getMachineInfo(ip, function(response){
 			if(response === 0){
 				$(view).html('<span class="online">●</span>');
@@ -181,7 +179,6 @@ $(document).ready(function() {
 			var y = d3.scale.linear().domain([0, max_data || 1]).range([h, 0]);
 			var line = d3.svg.line()
 				.x(function(d,i) {
-					console.log(i+count + ',' + d);
 					return x(i+count);
 				})
 				.y(function(d) {

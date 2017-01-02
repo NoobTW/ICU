@@ -54,21 +54,25 @@ html(lang='en')
 						.ICU-widget-container.gateway-list
 							.ICU-widget-wrapper
 								h3 Recent Events/Alarms
-								table.ICU-widget-table.table.table-hover#alarmsTable.table-stripe
+								table.ICU-widget-table.table.table-hover.table-responsive#alarmsTable.table-stripe
 									thead
 										tr
 											th Time
 											th Name
-											th Time
-											th Type
 											th Message
 									tbody
-										tr
-											td 123
-											td 123
-											td 123
-											td 123
-											td 123
+										- if(log.length == 0){
+											tr
+												td(colspan="4")
+													h4 No recent events/alarms.
+										- } else {
+											- for (var i=0;i<log.length;i++){
+												tr
+													td= log[i].time
+													td= log[i].ip
+													td= log[i].body
+											- }
+										- }
 
 .modal.fade#addMachineForm(tabindex='-1', role='dialog')
 	.modal-dialog(role='document')
