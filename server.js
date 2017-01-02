@@ -538,8 +538,7 @@ app
 
 .post('/message/boot', (req, res) => {
 	let data = req.body;
-	//let ip = req.headers['x-forwarded-for'].split(',')[0] || req.connection.remoteAddress;
-	let ip = '122.117.140.10';
+	let ip = req.headers['x-forwarded-for'].split(',')[0] || req.connection.remoteAddress;
 
 	if(data.type === 'BOOT' && ip){
 		if(current_alive_devices[ip]){
