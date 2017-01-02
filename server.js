@@ -253,8 +253,8 @@ app
 })
 
 .post('/machine', (req, res) => {
-	var data = req.body;
 	var sess = req.session;
+	var data = req.body;
 	let result = {};
 
 	if(sess.email){
@@ -334,10 +334,10 @@ app
 
 .delete('/machine', (req, res) => {
 	var sess = req.session;
-	var ip = req.body.ip;
+	var data = req.body;
 
 	if (sess.email) {
-		if(ip) {
+		if(data.ip) {
 			mc.connect(HOST_MONGO, (err, db) => {
 				var collection = db.collection('machine');
 				var result = {};
@@ -349,15 +349,15 @@ app
 					res.write(JSON.stringify(result));
 					res.end();
 				}
-				collection.remove({ip: ip}, (err, resp) => {
-					if (!err&&result) {
+				collection.remove({ip: data.ip}, (err, resp) => {
+					if (!err && resp) {
 						result = {
 							result: 0
 						};
 						res.writeHead(200, MIME_JSON);
 						res.write(JSON.stringify(result));
 						res.end();
-					}else if(!err&&!result) {
+					}else if(!err && resp) {
 						result = {
 							result: -2
 						};
