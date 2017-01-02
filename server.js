@@ -33,17 +33,17 @@ app
 	console.log('SERVER STARTED');
 });
 
-var current_alive_devices = [];
+var current_alive_devices = {};
 setInterval(() => {
 	for(let machines in current_alive_devices){
-		if((new Date() / 1000 | 0) - current_alive_devices[machines].last_seen > 2 * 60){
+		if((new Date() / 1000 | 0) - current_alive_devices[machines].last_seen > 1 * 60){
 			mc.connect(HOST_MONGO, (err, db) => {
-				db.collection('machine').find({ip: current_alive_devices[machines].ip}).toArray((err, docs) => {
+				db.collection('machine').find({ip: machines}).toArray((err, docs) => {
 					if(!err && docs.length){
 						var owner = docs[0].owner;
 						var new_log = {
 							owner: owner,
-							ip: current_alive_devices[machines].ip,
+							ip: machines,
 							type: 'BOOT',
 							body: 'Device is down',
 							time: new Date()
@@ -451,7 +451,6 @@ app
 		mc.connect(HOST_MONGO, (err, db) => {
 			db.collection('machine').find({ip: ip}).toArray((err, docs) => {
 				if(!err && docs.length){
-					console.log('test');
 					var owner = docs[0].owner;
 					var new_log = {
 						owner: owner,
@@ -479,10 +478,8 @@ app
 
 .post('/message/boot', (req, res) => {
 	let data = req.body;
-	let ip = req.headers['x-forwarded-for'].split(',')[0] || req.connection.remoteAddress;
-
-	console.log(ip);
-	console.log(JSON.stringify(data));
+	//let ip = req.headers['x-forwarded-for'].split(',')[0] || req.connection.remoteAddress;
+	let ip = '122.117.140.10';
 
 	if(data.type === 'BOOT' && ip){
 		if(current_alive_devices[ip]){
