@@ -91,11 +91,10 @@ $(document).ready(function() {
 
 	function notifyMe(msg, title, url) {
 		if (Notification.permission !== "granted"){
-			console.log('gg');
 			Notification.requestPermission();
 		} else {
-			console.log('hi notify');
 			var notification = new Notification('ICU', {
+				icon: '/public/img/logo.png',
 				body: msg,
 			});
 
@@ -493,18 +492,15 @@ $(document).ready(function() {
 	});
 
 	setInterval(function(){
-		console.log('hi');
 		$.ajax({
 			url: '/message',
 			type: 'GET',
 			dataType: 'json',
 			success: function(msg){
 				if(msg.result === 0){
-					var data = msg.message[0];
-					console.log((new Date() / 1000 | 0) - ((new Date(data.time)) / 1000 | 0)) ;
+					var data = msg.message;
 					if((new Date() / 1000 | 0) - ((new Date(data.time)) / 1000 | 0) < 5){
-						console.log('hillllll');
-						notifyMe(data.body);
+						notifyMe(data.body, data.ip);
 					}
 				}
 			}

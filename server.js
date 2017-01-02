@@ -510,13 +510,21 @@ app
 
 	if(sess.email){
 		mc.connect(HOST_MONGO, (err, db) => {
-			db.collection('log').find({$query: {owner: sess.email}, $orderby: {time: -1}}, {_id: 0}, {limit: 5}).toArray((err, docs) => {
+			db.collection('log').find({$query: {owner: sess.email}, $orderby: {time: -1}}, {_id: 0}).toArray((err, docs) => {
 				if(!err && docs.length){
-					res.writeHead(200, MIME_JSON);
-					result.result = 0;
-					result.message = docs;
-					res.write(JSON.stringify(result))
-					res.end();
+					docs = docs[0];
+					mc.connect(HOST_MONGO, (err, db) => {
+						db.collection('machine').find({ip: docs.ip}).toArray((err, machine) => {
+							if(!err && machine.length){
+								docs.ip = machine[0].name;
+								result.message = docs;
+								res.writeHead(200, MIME_JSON);
+								result.result = 0;
+								res.write(JSON.stringify(result))
+								res.end();
+							}
+						});
+					});
 				}else{
 					res.writeHead(200, MIME_JSON);
 					result.result = -1;
