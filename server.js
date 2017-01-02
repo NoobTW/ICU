@@ -504,6 +504,37 @@ app
 	}
 })
 
+.get('/message', (req, res) => {
+	let sess = req.session;
+	let result = {};
+
+	if(sess.email){
+		mc.connect(HOST_MONGO, (err, db) => {
+			db.collection('log').find({$query: {owner: sess.email}, $orderby: {time: -1}}, {_id: 0}, {limit: 5}).toArray((err, docs) => {
+				if(!err && docs.length){
+					res.writeHead(200, MIME_JSON);
+					result.result = 0;
+					result.message = docs;
+					res.write(JSON.stringify(result))
+					res.end();
+				}else{
+					res.writeHead(200, MIME_JSON);
+					result.result = -1;
+					res.write(JSON.stringify(result));
+					res.end();
+				}
+			});
+		});
+	}else{
+		result = {
+			result: -1
+		};
+		res.writeHead(401, MIME_JSON);
+		res.write(JSON.stringify(result));
+		res.end();
+	}
+})
+
 .post('/message/notify', (req, res) => {
 	let data = req.body;
 	let ip = req.headers['x-forwarded-for'].split(',')[0] || req.connection.remoteAddress;

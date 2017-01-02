@@ -89,6 +89,20 @@ $(document).ready(function() {
 		});
 	}
 
+	function notifyMe(msg) {
+		if (!("Notification" in window)) {
+			console.log('gggg');
+		} else if (Notification.permission === "granted") {
+			var notification = new Notification(msg);
+		} else if (Notification.permission !== 'denied') {
+			Notification.requestPermission(function (permission) {
+				if (permission === "granted") {
+					var notification = new Notification(msg);
+				}
+			});
+		}
+	}
+
 	if ($(location)[0].pathname === '/') {
 		appendMachineTable();
 	};
@@ -471,6 +485,24 @@ $(document).ready(function() {
 				}
 			}
 		});
-		
 	});
+
+	setInterval(function(){
+		console.log('hi');
+		$.ajax({
+			url: '/message',
+			type: 'GET',
+			dataType: 'json',
+			success: function(msg){
+				if(msg.result === 0){
+					var data = msg.message[0];
+					console.log((new Date() / 1000 | 0) - ((new Date(data.time)) / 1000 | 0)) ;
+					if((new Date() / 1000 | 0) - ((new Date(data.time)) / 1000 | 0) < 5){
+						console.log('hillllll');
+						notifyMe(data.body);
+					}
+				}
+			}
+		})
+	}, 5000);
 });
