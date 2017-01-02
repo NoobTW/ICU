@@ -1,4 +1,3 @@
-var fs = require('fs');
 var express = require('express');
 var bodyParser = require('body-parser');
 //var pug = require('pug');
@@ -337,11 +336,8 @@ app
 	var sess = req.session;
 	let result = {};
 
-	ip = data.ip;
-	name = data.name;
-
 	if (sess.email) {
-		if(ip&&name) {
+		if(data.ip && data.name) {
 			mc.connect(HOST_MONGO, (err, db) => {
 				var collection = db.collection('machine');
 				if (err) {
@@ -352,7 +348,7 @@ app
 					res.write(JSON.stringify(result));
 					res.end();
 				}
-				collection.update({ip: ip}, {$set: {name: name}}, (err, result) => {
+				collection.update({ip: data.ip}, {$set: {name: data.name}}, (err, result) => {
 					console.log(result);
 					if(!err&&result) {
 						result = {
@@ -584,7 +580,7 @@ app
 								result.message = docs;
 								res.writeHead(200, MIME_JSON);
 								result.result = 0;
-								res.write(JSON.stringify(result))
+								res.write(JSON.stringify(result));
 								res.end();
 							}
 						});
