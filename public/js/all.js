@@ -377,7 +377,9 @@ $(document).ready(function() {
 		$('#addMachineForm').modal('show');
 	});
 
-	$('#addMachineButton').on('click', function() {
+	$('#addMachineButton').on('click', function(event) {
+		event.preventDefault();
+		$('#addMachineForm').modal('hide');
 		var machineIp = $('input[name=machine-ip]').val();
 		var machineName = $('input[name=machine-name]').val();
 		var data = JSON.stringify({ip: machineIp, name: machineName});
@@ -442,6 +444,61 @@ $(document).ready(function() {
 		$('#checkDeleteMachineHeader').html('<b>Are you sure?</b>');
 		$('#checkDeleteMachineMessage').text('Do you want to delete this machine?');
 		$('#checkDeleteMachine').modal('show');
+	});
+
+	$('#machinesTable').on('click', '#editMachineButton', function(event) {
+		event.preventDefault();
+		ip = $(this).data('ip');
+		$('#doEditMachineButton').data('ip', ip);
+		$('#editMachineForm').modal('show');
+	});
+
+	$('#doEditMachineButton').on('click', function(event) {
+		event.preventDefault();
+		$('#editMachineForm').modal('hide');
+		ip = $(this).data('ip');
+		name = $("input[name='edit-machine-name']").val();
+		$.ajax({
+			url: 'machine',
+			type: 'PUT',
+			dataType: 'application/json; charset=utf-8',
+			data: {ip: ip, name: name},
+			complete: function(jqXHR, textStatus) {
+				var response = $.parseJSON(jqXHR.responseText).result;
+
+				if (response === -1) {
+					$('#alertHeader').text('Error');
+					$('#alertMessage').find('p').text("IP type is incorrect or name is empty");
+					$('#alert').modal('show');
+				}
+
+				else if (response === -2) {
+					$('#alertHeader').text('Error');
+					$('#alertMessage').find('p').text("This machine doesn't existed");
+					$('#alert').modal('show');
+				}
+
+				else if (response === -998) {
+					$('#alertHeader').text('Error');
+					$('#alertMessage').find('p').text("User isn't login");
+					$('#alert').modal('show');
+				}
+
+				else if (response === -999) {
+					$('#alertHeader').text('Error');
+					$('#alertMessage').find('p').text("Database Error");
+					$('#alert').modal('show');
+				}
+
+				else if (response === 0) {
+					$('#alertHeader').text('Success');
+					$('#alertMessage').find('p').text("Machine Update!");
+					$('#alert').modal('show');
+					$('#machinesTable > tbody').empty();
+					appendMachineTable();
+				}
+			}
+		});
 	});
 
 	$('#confirmDeleteMachine').on('click', function(event) {
