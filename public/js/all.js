@@ -106,6 +106,7 @@ $(document).ready(function() {
 				$('#alert').modal('show');
 			}
 			if (response === 0) {
+				$('#machineGraphContent').hide();
 				var intervalBasicInfo = setInterval(function(){
 					$('#OS').text(machineInfo.os);
 					$('#upTime').text(getUptime(machineInfo.uptime));
@@ -132,15 +133,12 @@ $(document).ready(function() {
 					var dataCPU = [];
 					var dataFreemem = [];
 					var count = 0;
-					$('#machineGraphContent').hide();
 
 					var yAxisCPU = function(d){
-						console.log('CPU:' + d);
 						return d+'%';
 					};
 
 					var yAxisFreemem = function(d){
-						console.log('MEM:' + d);
 						if(d > 1048576){
 							return `${d/1000000} GB`;
 						}else{
