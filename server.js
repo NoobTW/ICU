@@ -332,6 +332,66 @@ app
 	}
 })
 
+.delete('/machine', (req, res) => {
+	var sess = req.session;
+	var ip = req.body.ip;
+
+	if (sess.email) {
+		if(ip) {
+			mc.connect(HOST_MONGO, (err, db) => {
+				var collection = db.collection('machine');
+				var result = {};
+				if (err) {
+					result = {
+						result: -999
+					};
+					res.writeHead(500, MIME_JSON);
+					res.write(JSON.stringify(result));
+					res.end();
+				}
+				collection.remove({ip: ip}, (err, resp) => {
+					if (!err&&result) {
+						result = {
+							result: 0
+						};
+						res.writeHead(200, MIME_JSON);
+						res.write(JSON.stringify(result));
+						res.end();
+					}else if(!err&&!result) {
+						result = {
+							result: -2
+						};
+						res.writeHead(400, MIME_JSON);
+						res.write(JSON.stringify(result));
+						res.end();
+					}else {
+						result = {
+							result: -999
+						};
+						res.writeHead(500, MIME_JSON);
+						res.write(JSON.stringify(result));
+						res.end();
+					}
+				});
+			});
+		}else {
+			result = {
+				result: -1
+			};
+			res.writeHead(400, MIME_JSON);
+			res.write(JSON.stringify(result));
+			res.end();
+		}
+	}else {
+		var result = {
+			result: -998
+		};
+		res.writeHead(401, MIME_JSON);
+		res.write(JSON.stringify(result));
+		res.end();
+	}
+})
+
 .get('/machines', (req, res) => {
 	//var data = req.query;
 	var sess = req.session;

@@ -89,14 +89,15 @@ block body
 					p
 				.modal-footer
 					button.btn.btn-default(type='button', data-dismiss='modal') Close
-	.modal.fade#machineInfo(tabindex='-1', role='dialog')
+	.modal.fade#checkDeleteMachine(tabindex='-1', role='dialog')
 		.modal-dialog(role='document')
 			.modal-content
-				.modal-header#machineInfoHeader
+				.modal-header#checkDeleteMachineHeader
 					button.close(type='button', data-dismiss='modal', aria-label='Close')
 						span(aria-hidden='true') ×
 					h4.modal-title
-				.modal-body#machineInfoMessage
+				.modal-body#checkDeleteMachineMessage
 					p
 				.modal-footer
-					button.btn.btn-default(type='button', data-dismiss='modal') Close
+					button.btn.btn-danger(type='button', id='confirmDeleteMachine') Go ahead anyway
+					button.btn.btn-primary(type='button', data-dismiss='modal') No
