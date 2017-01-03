@@ -373,6 +373,83 @@ $(document).ready(function() {
 		});
 	});
 
+	$('#openUpdateUserForm').on('click', function(event) {
+		event.preventDefault();
+		email = $(this).data('email');
+		$('#doUpdateUserButton').data('email', email);
+	    $('#editUserForm').modal('show');
+	});
+
+	$('#editUserForm').on('click', '#doUpdateUserButton', function(event) {
+		event.preventDefault();
+		$('#editUserForm').modal('hide');
+		var email = $(this).data('email');
+		var oldPassword = $("input[name='old-password']").val();
+		var newPassword = $("input[name='new-password']").val();
+		var newPasswordCheck = $("input[name='new-password-check']").val();
+
+		if (!oldPassword || !newPassword || !newPasswordCheck) {
+			oldPassword = $("input[name='old-password']").val('');
+			newPassword = $("input[name='new-password']").val('');
+			newPasswordCheck = $("input[name='new-password-check']").val('');
+			$('#alertHeader').text('Error');
+			$('#alertMessage').find('p').text("All inputs can not be emtpy");
+			$('#alert').modal('show');
+			return false;
+		}
+
+		else if (newPassword !== newPasswordCheck) {
+			oldPassword = $("input[name='old-password']").val('');
+			newPassword = $("input[name='new-password']").val('');
+			newPasswordCheck = $("input[name='new-password-check']").val('');
+			$('#alertHeader').text('Error');
+			$('#alertMessage').find('p').text("Password doesn't match the confirmation");
+			$('#alert').modal('show');
+			return false;
+		}
+
+		else {
+			var oldPassword = sha256(oldPassword);
+			var newPassword = sha256(newPassword);
+			$.ajax({
+				url: '/user',
+				type: 'PUT',
+				dataType: 'application/json; charset=utf-8',
+				data: {email: email, oldpassword: oldPassword, newpassword: newPassword},
+				complete: function(jqXHR, textStatus) {
+					var response = $.parseJSON(jqXHR.responseText).result;
+
+					if (response === -1) {
+						$('#alertHeader').text('Error');
+						$('#alertMessage').find('p').text("Old password is wrong");
+						$('#alert').modal('show');
+					}
+
+					else if (response === -998) {
+						$('#alertHeader').text('Error');
+						$('#alertMessage').find('p').text("User doesn't login");
+						$('#alert').modal('show');
+					}
+
+					else if (response === -999) {
+						$('#alertHeader').text('Error');
+						$('#alertMessage').find('p').text("Database Error");
+						$('#alert').modal('show');
+					}
+
+					else if (response === 0) {
+						$('#alertHeader').text('Success');
+						$('#alertMessage').find('p').text("Passord Changed!");
+						$('#alert').modal('show');
+						$('#machinesTable > tbody').empty();
+						appendMachineTable();
+					}
+				}
+			});
+		}
+
+	});
+
 	$('#openAddMachineButton').on('click', function() {
 		$('#addMachineForm').modal('show');
 	});
@@ -412,7 +489,7 @@ $(document).ready(function() {
 
 				else if (response === -998) {
 					$('#alertHeader').text('Error');
-					$('#alertMessage').find('p').text("User isn't login");
+					$('#alertMessage').find('p').text("User doesn't login");
 					$('#alert').modal('show');
 					return false;
 				}
@@ -460,7 +537,7 @@ $(document).ready(function() {
 		name = $("input[name='edit-machine-name']").val();
 		 $("input[name='edit-machine-name']").val('');
 		$.ajax({
-			url: 'machine',
+			url: '/machine',
 			type: 'PUT',
 			dataType: 'application/json; charset=utf-8',
 			data: {ip: ip, name: name},
@@ -481,7 +558,7 @@ $(document).ready(function() {
 
 				else if (response === -998) {
 					$('#alertHeader').text('Error');
-					$('#alertMessage').find('p').text("User isn't login");
+					$('#alertMessage').find('p').text("User doesn't login");
 					$('#alert').modal('show');
 				}
 
@@ -528,7 +605,7 @@ $(document).ready(function() {
 
 				else if (response === -998) {
 					$('#alertHeader').text('Error');
-					$('#alertMessage').find('p').text("User isn't login");
+					$('#alertMessage').find('p').text("User doesn't login");
 					$('#alert').modal('show');
 				}
 
