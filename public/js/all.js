@@ -207,7 +207,8 @@ $(document).ready(function() {
 				  .attr("width", w + m[1] + m[3])
 				  .attr("height", h + m[0] + m[2])
 				.append("svg:g")
-				  .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
+				  .attr("transform", "translate(" + m[3] + "," + m[0] + ")")
+
 
 			var xAxis = d3.svg.axis().scale(x).tickSize(-h).tickSubdivide(true).tickFormat(function(d){
 				var now = new Date((time + d)*1000).toTimeString().split(' ')[0].split(':');
@@ -218,7 +219,7 @@ $(document).ready(function() {
 				  .attr("class", "x axis")
 				  .attr("transform", "translate(0," + h + ")")
 				  .call(xAxis);
-
+				  
 			var yAxisLeft = d3.svg.axis().scale(y).ticks(4).orient("left").tickFormat(yAxisFormat)
 			graph.append("svg:g")
 				  .attr("class", "y axis")
@@ -226,6 +227,7 @@ $(document).ready(function() {
 				  .call(yAxisLeft);
 
 			graph.append("svg:path").attr("d", line(data));
+
 		}
 
 		// $('#machinesTable').on('click', '#displayMachineInfo', function(event) {
