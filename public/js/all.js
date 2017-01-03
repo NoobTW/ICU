@@ -441,8 +441,6 @@ $(document).ready(function() {
 						$('#alertHeader').text('Success');
 						$('#alertMessage').find('p').text("Passord Changed!");
 						$('#alert').modal('show');
-						$('#machinesTable > tbody').empty();
-						appendMachineTable();
 					}
 				}
 			});
