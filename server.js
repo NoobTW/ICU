@@ -183,6 +183,43 @@ app
 	});
 })
 
+.put('/user', (req, res) => {
+	let sess = req.session;
+	let data = req.data;
+	let result = {};
+
+	if(sess.email){
+		if(data.oldpassword && data.newpassword){
+			mc.connect(HOST_MONGO, (err, db) => {
+				db.collection('user').update({'email': data.email, 'password': data.oldpassword}, {$set: {password: data.newpassword}}, (err) => {
+					if(!err){
+						result.result = 0;
+						res.writeHead(200);
+						res.write(JSON.stringify(result));
+						res.end();
+					}else{
+						result.result = -1;
+						res.writeHead(400);
+						res.write(JSON.stringify(result));
+						res.end();
+					}
+					db.close();
+				});
+			});
+		}else{
+			result.result = -2;
+			res.writeHead(400, MIME_JSON);
+			res.write(JSON.stringify(result));
+			res.end();
+		}
+	}else{
+		result.result = -998;
+		res.writeHead(400, MIME_JSON);
+		res.write(JSON.stringify(result));
+		res.end();
+	}
+})
+
 .post('/logout', (req, res) => {
 	req.session.destroy();
 	var result = {
