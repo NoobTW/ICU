@@ -243,7 +243,6 @@ $(document).ready(function() {
 
 	$('#loginButton').on('click', function(event) {
 		event.preventDefault();
-		$(this).html('<i class="fa fa-spinner fa-spin"></i>');
 		var email = $('input[name=email]').val();
 		var password = $('input[name=password]').val();
 
@@ -261,6 +260,8 @@ $(document).ready(function() {
 			return false;
 		}
 
+		$(this).html('<i class="fa fa-spinner fa-spin"></i>');
+
 		var data = JSON.stringify({email: email, password: sha256(password)});
 		$.ajax({
 			url: '/login',
@@ -274,6 +275,7 @@ $(document).ready(function() {
 					$('#alertHeader').text('Error');
 					$('#alertMessage').find('p').text("Email or password is incorrect");
 					$('#alert').modal('show');
+					$('#loginButton').text('Login');
 					return false;
 				}
 
@@ -281,6 +283,7 @@ $(document).ready(function() {
 					$('#alertHeader').text('Error');
 					$('#alertMessage').find('p').text("Database Error");
 					$('#alert').modal('show');
+					$('#loginButton').text('Login');
 					return false;
 				}
 
