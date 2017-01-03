@@ -22,9 +22,9 @@ block body
 										i.fa.fa-sign-out
 										|  Logout
 								li
-									a(href='#')
+									a(href='#', data-email=email)#openUpdateUserForm
 										i.fa.fa-user
-										|  User Information
+										|  Change Password
 		.fill-screen.ICU-body
 			.ICU-side-nav.container-relative.pull-left
 				ul.nav.nav-pills.nav-stacked
@@ -114,4 +114,22 @@ block body
 							input(name='edit-machine-name', placeholder='Set your Machine Name').form-control
 				.modal-footer
 					button.btn.btn-success(type='button', id='doEditMachineButton') Edit Machine
+					button.btn.btn-default(type='button', data-dismiss='modal') Close
+	.modal.fade#editUserForm(tabindex='-1', role='dialog')
+		.modal-dialog(role='document')
+			.modal-content
+				.modal-header
+					button.close(type='button', data-dismiss='modal', aria-label='Close')
+						span(aria-hidden='true') ×
+					h4.modal-title Change Password
+				.modal-body
+					form
+						.form-group
+							input(type='password', name='old-password', placeholder='Old Password').form-control
+						.form-group
+							input(type='password', name='new-password', placeholder='New Password').form-control
+						.form-group
+							input(type='password', name='new-password-check', placeholder='Confirm new password').form-control
+				.modal-footer
+					button.btn.btn-success(type='button', id='doUpdateUserButton') Change Password
 					button.btn.btn-default(type='button', data-dismiss='modal') Close
