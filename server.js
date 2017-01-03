@@ -185,7 +185,7 @@ app
 
 .put('/user', (req, res) => {
 	let sess = req.session;
-	let data = req.data;
+	let data = req.body;
 	let result = {};
 
 	if(sess.email){
