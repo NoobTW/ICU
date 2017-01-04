@@ -711,7 +711,7 @@ app
 
 .get('/auth/facebook', (req, res) => {
 	var facebook_oauth_url = 'https://www.facebook.com/dialog/oauth?' +
-		'redirect_uri=http://localhost:10150/auth/facebook/callback'+
+		'redirect_uri=http://toy.noob.tw/auth/facebook/callback'+
 		'&client_id=' + FB_APP_ID +
 		'&scope=public_profile,email'+
 		'&response_type=code';
@@ -726,7 +726,7 @@ app
 			'client_id=' + FB_APP_ID +
 			'&client_secret=' + FB_APP_KEY +
 			'&code=' + code +
-			'&redirect_uri=' + 'http://localhost:10150/auth/facebook/callback',
+			'&redirect_uri=' + 'http://toy.noob.tw/auth/facebook/callback',
 		method:'GET'
 	};
 	request(token_option, (err, resposne, body) => {
