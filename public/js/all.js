@@ -134,12 +134,17 @@ $(document).ready(function() {
 		$('#machineGraphContent').hide();
 		var intervalBasicInfo = setInterval(function(){
 			getMachineInfo(machineIP, function(response, machineInfo) {
-				if (response !== 0) {
+				if (response === -1 || response === -3) {
 					$('#alertHeader').text('Warning');
 					$('#alertMessage').find('p').text("Your Machine is Dead, ASshole");
 					$('#alert').modal('show');
 					intervalBasicInfo = null;
-				} else {
+				} else if(response === -2) {
+					$('#alertHeader').text('Warning');
+					$('#alertMessage').find('p').text("Is that your machine?");
+					$('#alert').modal('show');
+					intervalBasicInfo = null;
+				}else {
 					var urlSearch = $(location)[0].search;
 					var machineIP = urlSearch.split('&')[0].split('=')[1];
 

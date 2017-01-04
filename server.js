@@ -251,24 +251,39 @@ app
 
 	if(sess.email){
 		if(data.ip){
-			request.get('http://' + data.ip + ':' + PORT_ICU_CLIENT + '/status', {
-				timeout: 5000
-			}, (err, resp, body) => {
-				if(!err && resp){
-					res.writeHead(200, MIME_JSON);
-					body = JSON.parse(body);
-					result = body;
-					result.result = 0;
-					res.write(JSON.stringify(result));
-					res.end();
-				}else{
-					result = {
-						result: -3
-					};
-					res.writeHead(400, MIME_JSON);
-					res.write(JSON.stringify(result));
-					res.end();
-				}
+			mc.connect(HOST_MONGO, (err, db) => {
+				db.collection('machine').find({'ip': data.ip}).toArray((err, docs) => {
+					if(!err && docs[0] && sess.email === docs[0].owner){
+						request.get('http://' + data.ip + ':' + PORT_ICU_CLIENT + '/status', {
+							timeout: 5000
+						}, (err, resp, body) => {
+							if(!err && resp){
+								res.writeHead(200, MIME_JSON);
+								body = JSON.parse(body);
+								result = body;
+								result.result = 0;
+								res.write(JSON.stringify(result));
+								res.end();
+							}else{
+								result = {
+									result: -3
+								};
+								res.writeHead(400, MIME_JSON);
+								res.write(JSON.stringify(result));
+								res.end();
+							}
+						});
+					}else{
+						if(!err){
+							result = {
+								result: -2
+							};
+							res.writeHead(401, MIME_JSON);
+							res.write(JSON.stringify(result));
+							res.end();
+						}
+					}
+				});
 			});
 		}else{
 			result = {
@@ -280,7 +295,7 @@ app
 		}
 	}else{
 		result = {
-			result: -998
+			result: -2
 		};
 		res.writeHead(401, MIME_JSON);
 		res.write(JSON.stringify(result));
