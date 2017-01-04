@@ -483,19 +483,19 @@ $(document).ready(function() {
 
 				if (response === -1) {
 					$('#alertHeader').text('Error');
-					$('#alertMessage').find('p').text("Your IP type is incorrect");
+					$('#alertMessage').find('p').text("Your IP type is incorrect.");
 					$('#alert').modal('show');
 				}
 
 				else if (response === -2) {
 					$('#alertHeader').text('Error');
-					$('#alertMessage').find('p').text("This machine doesn't exist");
+					$('#alertMessage').find('p').text("This machine has been registered.");
 					$('#alert').modal('show');
 				}
 
 				else if (response === -3) {
 					$('#alertHeader').text('Error');
-					$('#alertMessage').find('p').text("This machine doesn't response");
+					$('#alertMessage').find('p').text("This machine doesn't response.");
 					$('#alert').modal('show');
 				}
 
@@ -639,18 +639,20 @@ $(document).ready(function() {
 	});
 
 	setInterval(function(){
-		$.ajax({
-			url: '/message',
-			type: 'GET',
-			dataType: 'json',
-			success: function(msg){
-				if(msg.result === 0){
-					var data = msg.message;
-					if((new Date() / 1000 | 0) - ((new Date(data.time)) / 1000 | 0) < 5){
-						notifyMe(data.body, data.ip);
+		if($(location)[0].pathname !== '/login' && $(location)[0].pathname !== '/register'){
+			$.ajax({
+				url: '/message',
+				type: 'GET',
+				dataType: 'json',
+				success: function(msg){
+					if(msg.result === 0){
+						var data = msg.message;
+						if((new Date() / 1000 | 0) - ((new Date(data.time)) / 1000 | 0) < 5){
+							notifyMe(data.body, data.ip);
+						}
 					}
 				}
-			}
-		})
+			});
+		}
 	}, 5000);
 });
