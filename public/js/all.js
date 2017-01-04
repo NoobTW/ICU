@@ -72,11 +72,11 @@ $(document).ready(function() {
 				var machines = $.parseJSON(jqXHR.responseText).machines;
 				if (response === 0) {
 					for (var i = 0; i < machines.length; i++) {
-						var machineInfoURL = "machineInfo?ip=" + machines[i].ip + "&name=" + machines[i].name;
+						var machineInfoURL = "machineInfo?ip=" + machines[i].ip + "&name=" + escapeHtml(machines[i].name);
 						$('#machinesTable > tbody:last-child').append(
 						"<tr>"+
 							"<td class='text-center'>" + "<a href='" + machineInfoURL + "' class='btn btn-info'>"+"<i class='fa fa-eye'></i>" + "</a>" + "</td>" +
-							"<td class='text-center'>" + machines[i].name + "</td>" +
+							"<td class='text-center'>" + escapeHtml(machines[i].name) + "</td>" +
 							"<td>" + machines[i].ip + "</td>" +
 							"<td class='text-center status'><i class='fa fa-spinner fa-spin'></i></td>" + 
 							"<td>" + "<button type='button' data-ip='" + machines[i].ip + "' class='btn btn-primary editMachineButton'>Edit</button>" + "</td>" +
@@ -105,6 +105,15 @@ $(document).ready(function() {
 			}
 
 		}
+	}
+
+	function escapeHtml(unsafe) {
+		return unsafe
+			.replace(/&/g, '&amp;')
+			.replace(/</g, '&lt;')
+			.replace(/>/g, '&gt;')
+			.replace(/"/g, '&quot;')
+			.replace(/'/g, '&#039;');
 	}
 
 	if ($(location)[0].pathname === '/') {
