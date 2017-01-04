@@ -17,14 +17,14 @@ block body
 								input.form-control(name='passwordCheck', type='password', placeholder='Password Check', required='required')
 							button.btn.btn-primary.btn-lg.btn-block#registerButton(type='button')
 								| Register
-.modal.fade#alert(tabindex='-1', role='dialog')
-	.modal-dialog(role='document')
-		.modal-content
-			.modal-header#alertHeader
-				button.close(type='button', data-dismiss='modal', aria-label='Close')
-					span(aria-hidden='true') ×
-				h4.modal-title
-			.modal-body#alertMessage
-				p
-			.modal-footer
-				button.btn.btn-default(type='button', data-dismiss='modal') Close
+	.modal.fade#alert(tabindex='-1', role='dialog')
+		.modal-dialog(role='document')
+			.modal-content
+				.modal-header#alertHeader
+					button.close(type='button', data-dismiss='modal', aria-label='Close')
+						span(aria-hidden='true') ×
+					h4.modal-title
+				.modal-body#alertMessage
+					p
+				.modal-footer
+					button.btn.btn-default(type='button', data-dismiss='modal') Close
