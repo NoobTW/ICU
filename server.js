@@ -35,7 +35,6 @@ mc.connect(HOST_MONGO, (err, database) => {
 	if(!err){
 		db = database;
 		app.listen(port, () => {
-			console.log('SERVER STARTED.');
 		});
 	}else{
 		console.error('Cannot connect to database.');
@@ -154,7 +153,7 @@ app
 			res.write(JSON.stringify(result));
 			res.end();
 		}else if(!err){
-			collection.insert({
+			db.collection('user').insert({
 				email: data.email,
 				password: data.password
 			}, (err, resp) => {
@@ -321,7 +320,7 @@ app
 							res.write(JSON.stringify(result));
 							res.end();
 						}else if(!err){
-							collection.insert({
+							db.collection('machine').insert({
 								ip: data.ip,
 								name: data.name,
 								owner: sess.email
