@@ -9,15 +9,9 @@ var config = require('./config');
 var mongo = require('mongodb');
 var mc = mongo.MongoClient;
 var app = express();
-
-const HOST_MONGO = 'mongodb://139.59.224.238:27017/test';
-const port = process.env.PORT || 10150;
-const PORT_ICU_CLIENT = 10854;
-const FB_APP_ID = '1800155283585541';
-const FB_APP_KEY = '5f559de2468c506036c10164a0c8adff';
-const MIME_JSON = {'Content-Type': 'application/json'};
-
 var db;
+
+const MIME_JSON = {'Content-Type': 'application/json'};
 
 app
 .set('view engine', 'pug')
@@ -31,10 +25,10 @@ app
 }))
 .use(cookieParser(config.secret.cookie));
 
-mc.connect(HOST_MONGO, (err, database) => {
+mc.connect(config.db.host, (err, database) => {
 	if(!err){
 		db = database;
-		app.listen(port, () => {
+		app.listen(process.env.PORT || config.port.server, () => {
 		});
 	}else{
 		console.error('Cannot connect to database.');
@@ -252,7 +246,7 @@ app
 		if(data.ip){
 			db.collection('machine').find({'ip': data.ip}).toArray((err, docs) => {
 				if(!err && docs[0] && sess.email === docs[0].owner){
-					request.get('http://' + data.ip + ':' + PORT_ICU_CLIENT + '/status', {
+					request.get('http://' + data.ip + ':' + config.port.client + '/status', {
 						timeout: 5000
 					}, (err, resp, body) => {
 						if(!err && resp){
@@ -307,7 +301,7 @@ app
 
 	if(sess.email){
 		if(data.ip && data.name){
-			request.get('http://' + data.ip + ':' + PORT_ICU_CLIENT + '/status', {
+			request.get('http://' + data.ip + ':' + config.port.client + '/status', {
 				timeout: 5000
 			}, (err, resp, body) => {
 				if(!err && resp && body){
@@ -685,7 +679,7 @@ app
 .get('/auth/facebook', (req, res) => {
 	var facebook_oauth_url = 'https://www.facebook.com/dialog/oauth?' +
 		'redirect_uri=http://toy.noob.tw/auth/facebook/callback'+
-		'&client_id=' + FB_APP_ID +
+		'&client_id=' + config.fb.APP_ID +
 		'&scope=public_profile,email'+
 		'&response_type=code';
 	res.redirect(facebook_oauth_url);
@@ -696,8 +690,8 @@ app
 	var code = req.query.code;
 	var token_option = {
 		url:'https://graph.facebook.com/v2.8/oauth/access_token?' +
-			'client_id=' + FB_APP_ID +
-			'&client_secret=' + FB_APP_KEY +
+			'client_id=' + config.fb.APP_ID +
+			'&client_secret=' + config.fb.APP_KEY +
 			'&code=' + code +
 			'&redirect_uri=' + 'http://toy.noob.tw/auth/facebook/callback',
 		method:'GET'
@@ -707,7 +701,7 @@ app
 		var info_option = {
 			url:'https://graph.facebook.com/debug_token?'+
 		'input_token='+access_token +
-		'&access_token=' + FB_APP_ID,
+		'&access_token=' + config.fb.APP_ID,
 			method:'GET'
 		};
 		request(info_option, (err, response, body) => {
