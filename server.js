@@ -51,6 +51,7 @@ setInterval(() => {
 					}
 					delete current_alive_devices[machines];
 				});
+				db.close();
 			});
 		}
 	}
@@ -127,6 +128,7 @@ app
 					res.end();
 				}
 			});
+			db.close();
 		});
 	}
 })
@@ -180,6 +182,7 @@ app
 				res.end();
 			}
 		});
+		db.close();
 	});
 })
 
@@ -203,8 +206,8 @@ app
 						res.write(JSON.stringify(result));
 						res.end();
 					}
-					db.close();
 				});
+				db.close();
 			});
 		}else{
 			result.result = -2;
@@ -284,6 +287,7 @@ app
 						}
 					}
 				});
+				db.close();
 			});
 		}else{
 			result = {
@@ -310,9 +314,12 @@ app
 
 	if(sess.email){
 		if(data.ip && data.name){
+			console.log('http://' + data.ip + ':' + PORT_ICU_CLIENT + '/status');
 			request.get('http://' + data.ip + ':' + PORT_ICU_CLIENT + '/status', {
 				timeout: 5000
 			}, (err, resp, body) => {
+				console.log(err);
+				console.log(body);
 				if(!err && resp && body){
 					mc.connect(HOST_MONGO, (err, db) => {
 						var collection = db.collection('machine');
@@ -355,6 +362,7 @@ app
 								res.end();
 							}
 						});
+						db.close();
 					});
 				}else{
 					result = {
@@ -391,7 +399,6 @@ app
 	if (sess.email) {
 		if(data.ip && data.name) {
 			mc.connect(HOST_MONGO, (err, db) => {
-				var collection = db.collection('machine');
 				if (err) {
 					result = {
 						result: -999
@@ -400,7 +407,7 @@ app
 					res.write(JSON.stringify(result));
 					res.end();
 				}
-				collection.update({ip: data.ip}, {$set: {name: data.name}}, (err, result) => {
+				db.collection('machine').update({ip: data.ip}, {$set: {name: data.name}}, (err, result) => {
 					if(!err&&result) {
 						result = {
 							result: 0
@@ -424,6 +431,7 @@ app
 						res.end();
 					}
 				});
+				db.close();
 			});
 		}else {
 			result = {
@@ -484,6 +492,7 @@ app
 						res.end();
 					}
 				});
+				db.close();
 			});
 		}else {
 			result = {
@@ -553,6 +562,7 @@ app
 					res.end();
 				}
 			});
+			db.close();
 		});
 	}else{
 		var result = {
@@ -609,6 +619,7 @@ app
 					});
 				}
 			});
+			db.close();
 		});
 	}else{
 		res.redirect('/login');
@@ -635,6 +646,7 @@ app
 								res.end();
 							}
 						});
+						db.close();
 					});
 				}else{
 					res.writeHead(200, MIME_JSON);
@@ -643,6 +655,7 @@ app
 					res.end();
 				}
 			});
+			db.close();
 		});
 	}else{
 		result = {
@@ -682,6 +695,7 @@ app
 					});
 				}
 			});
+			db.close();
 		});
 	}
 })
@@ -719,6 +733,7 @@ app
 						res.end();
 					}
 				});
+				db.close();
 			});
 		}
 	}
@@ -791,6 +806,7 @@ app
 								res.redirect('/login');
 								res.end();
 							}
+							db.close();
 						});
 					}else{
 						res.send('err');
