@@ -38,7 +38,7 @@ mc.connect(HOST_MONGO, (err, database) => {
 			console.log('SERVER STARTED.');
 		});
 	}else{
-			console.error('Cannot connect to database.');
+		console.error('Cannot connect to database.');
 	}
 });
 
