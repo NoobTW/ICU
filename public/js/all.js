@@ -4,9 +4,6 @@ $(document).ready(function() {
 			$('#loader').fadeOut('slow/400/fast');
 			$('.content').css('display', 'block');
 		}, 500);
-		if (Notification.permission !== "granted"){
-			Notification.requestPermission();
-		}
 	}
 	load();
 
@@ -121,6 +118,9 @@ $(document).ready(function() {
 
 	if ($(location)[0].pathname === '/') {
 		appendMachineTable();
+		if (Notification.permission !== "granted"){
+			Notification.requestPermission();
+		}
 	};
 
 	if ($(location)[0].pathname === '/machineInfo') {
