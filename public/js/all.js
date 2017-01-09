@@ -4,6 +4,9 @@ $(document).ready(function() {
 			$('#loader').fadeOut('slow/400/fast');
 			$('.content').css('display', 'block');
 		}, 500);
+		if (Notification.permission !== "granted"){
+			Notification.requestPermission();
+		}
 	}
 	load();
 
